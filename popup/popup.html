@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="popup.css">
+    <script src="popup.js" defer></script>
+    <title>Dispatch Rider</title>
+</head>
+
+<body>
+    <form>
+        <label for="webhooksSelection">Webhook:</label>
+        <select name="webhooksSelection" id="webhooksSelection"></select>
+        <textarea name="textarea" id="textarea" cols="30" rows="10" placeholder="Message to send..."></textarea>
+        <input type="submit" value="Send">
+    </form>
+    <label for="webhookName">Add Webhook Name:</label>
+    <input type="text" name="webhookName" id="webhookName" placeholder="Enter Webhook Name">
+    <label for="webhookUrl">Add Webhook URL:</label>
+    <input type="text" name="webhookUrl" id="webhookUrl" placeholder="Enter Webhook Url">
+    <button id="addWebhooksBtn">Add</button>
+</body>
+
+</html>
