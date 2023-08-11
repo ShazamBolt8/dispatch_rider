@@ -1,83 +1,65 @@
-//these are used to add new hooks
+//for adding new hooks
 const webhookName = document.getElementById('webhookName');
 const webhookUrl = document.getElementById('webhookUrl');
 const addWebhook = document.getElementById('addWebhook');
 
-//these are used to share webhooks
+//for sharing webhooks
 const shareCurrentHook = document.getElementById('shareCurrentHook');
 const shareAllHook = document.getElementById('shareAllHook');
 
-//these are used to toggle between webhooks
+//for toggling between webhooks
 const prevHook = document.getElementById('prevHook');
-const currentHook = document.getElementById('currentHook'); //merely an html element
+const currentHook = document.getElementById('currentHook');
 const nextHook = document.getElementById('nextHook');
-let currentIndex = 0; //currrent iteration of webhook array from storage
+let currentIndex = 0;
 let numberOfHook = 0;
-let selectedHook = {}; //stores data about currently selected webhook from storage
+let selectedHook = {};
 
-//it is the main messaging area
+//main messaging area
 const messageBox = document.getElementById('messageBox');
 const sendMessageButton = document.getElementById('sendMessage');
 
 //chrome storage
 const storage = chrome.storage.sync;
 
-//types: success, warn, error
+// types: success, warn, error
 function notify(message = 'Message sent successfully.', type = 'success') {
   const notification = document.getElementById('notification');
   notification.innerText = message;
-  switch (type) {
-    case 'warn':
-      notification.classList.add('warn');
-      break;
-    case 'error':
-      notification.classList.add('error');
-      break;
-    default:
-      notification.classList.add('success');
-      break;
-  }
+  notification.className = type; // Use className for cleaner class assignment
   notification.style.display = 'block';
   setTimeout(() => {
     notification.style.display = 'none';
-    //clear previous records
-    notification.classList.remove('warn');
-    notification.classList.remove('error');
-    notification.classList.remove('success');
+    notification.className = ''; // Clear classes
   }, 2000);
 }
 
-//Gets webhooks from storage
 function getWebhooksFromStorage(callback) {
   storage.get(['webhook'], ({ webhook }) => {
-    webhook = webhook || []; //if null, be empty array []
-    callback(webhook);
+    const webhooks = webhook || [];
+    callback(webhooks);
   });
 }
 
-//Whether the send button should be disabled or not depending on certain factors
+//to update accessibility of send button based on certain factors
 function updateSendMessageButton() {
-  getWebhooksFromStorage((webhook) => {
-    if (webhook.length > 0 && messageBox.value.length > 0) {
-      sendMessageButton.disabled = false;
-    } else {
-      sendMessageButton.disabled = true;
-    }
+  getWebhooksFromStorage((webhooks) => {
+    sendMessageButton.disabled = !( webhooks.length > 0 && messageBox.value.length > 0 );
   });
 }
 
-//updates the current hook's name
+//to update toggle menu
 function updateCurrentHook() {
-  getWebhooksFromStorage((webhook) => {
-    if (webhook.length > 0) {
+  getWebhooksFromStorage((webhooks) => {
+    if (webhooks.length > 0) {
       if (!selectedHook.name) {
-        selectedHook.name = webhook[0].name;
-        selectedHook.url = webhook[0].url;
+        selectedHook.name = webhooks[0].name;
+        selectedHook.url = webhooks[0].url;
       }
       currentHook.innerText = selectedHook.name;
-      numberOfHook = webhook.length;
-      prevHook.disabled = false;
-      nextHook.disabled = false;
+      numberOfHook = webhooks.length;
+      prevHook.disabled = currentIndex === 0;
+      nextHook.disabled = currentIndex === numberOfHook - 1;
       shareCurrentHook.disabled = false;
       shareAllHook.disabled = false;
     } else {
@@ -90,7 +72,7 @@ function updateCurrentHook() {
   });
 }
 
-//updates the send button and the current hook data
+//to update both
 function updateState() {
   updateSendMessageButton();
   updateCurrentHook();
@@ -99,8 +81,9 @@ function updateState() {
 function sendMessage(message) {
   if (message.length <= 0) {
     notify('Message cannot be empty.', 'error');
-    return false;
+    return;
   }
+
   fetch(selectedHook.url, {
     method: 'POST',
     headers: {
@@ -112,72 +95,105 @@ function sendMessage(message) {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error(response.status);
         throw new Error(response.statusText);
-        notify('Error Occured: ' + response.status, 'error');
       }
       notify(`Message sent to ${selectedHook.name} successfully.`, 'success');
       messageBox.value = '';
     })
     .catch((error) => {
-      notify('An error occurred:', error.message, 'error');
+      notify('An error occurred: ' + error.message, 'error');
       console.error('An error occurred:', error.message);
+    })
+    .finally(() => {
+      updateState();
     });
-  updateState();
 }
 
-//this part adds new webhooks
+//adding the webhooks
 addWebhook.addEventListener('click', () => {
   const trimmedHookName = webhookName.value.trim();
   const trimmedHookUrl = webhookUrl.value.trim();
-  //if the webhook values in input fields are empty or not
-  if (trimmedHookName.length == 0 || trimmedHookUrl.length == 0) {
-    notify('Webhook name and url are required.', 'warn');
-    return false;
+
+  if (trimmedHookName.length === 0 || trimmedHookUrl.length === 0) {
+    notify('Webhook name and URL are required.', 'warn');
+    return;
   }
-  getWebhooksFromStorage((webhook) => {
-    //proceed to insert and notify
-    webhook.push({ name: trimmedHookName, url: trimmedHookUrl });
-    storage.set({ webhook });
+
+  getWebhooksFromStorage((webhooks) => {
+    //proceeding to add
+    webhooks.push({ name: trimmedHookName, url: trimmedHookUrl });
+    storage.set({ webhook: webhooks });
     notify('Webhook added successfully.', 'success');
     webhookName.value = webhookUrl.value = '';
-    //update ui state to reflect changes
     updateState();
   });
 });
 
-//it is used to toggle currently selected webhook
+//sharing current one
+shareCurrentHook.addEventListener('click', () => {
+  const shareData = {
+    title: selectedHook.name,
+    text: 'Check out this webhook: ' + selectedHook.url,
+    url: selectedHook.url,
+  };
+  navigator
+    .share(shareData)
+    .then(() => {
+      notify('Shared successfully');
+    })
+    .catch((error) => {
+      notify('Error sharing: ' + error, 'error');
+    });
+});
+
+//sharing all hooks
+shareAllHook.addEventListener('click', () => {
+  getWebhooksFromStorage((webhooks) => {
+    const urlList = webhooks.map((wb) => wb.url).join('\n');
+    const shareData = {
+      title: 'All Webhooks',
+      text: urlList,
+      url: urlList,
+    };
+    navigator
+      .share(shareData)
+      .then(() => {
+        notify('Shared successfully');
+      })
+      .catch((error) => {
+        notify('Error sharing: ' + error, 'error');
+      });
+  });
+});
+
+//fot toggling
 function toggleWebhookData(index) {
-  console.log(index);
-  getWebhooksFromStorage((webhook) => {
-    currentHook.innerText = webhook[index].name;
-    selectedHook.name = webhook[index].name;
-    selectedHook.url = webhook[index].url;
+  getWebhooksFromStorage((webhooks) => {
+    const webhook = webhooks[index];
+    currentHook.innerText = webhook.name;
+    selectedHook.name = webhook.name;
+    selectedHook.url = webhook.url;
   });
 }
-//related to above function
+
 prevHook.addEventListener('click', () => {
   if (currentIndex > 0) {
     toggleWebhookData(--currentIndex);
   }
 });
-//same as above but opposite
+
 nextHook.addEventListener('click', () => {
   if (currentIndex < numberOfHook - 1) {
     toggleWebhookData(++currentIndex);
   }
 });
 
-//see if messageBox is empty and update the send button accordingly
-messageBox.addEventListener('input', () => {
-  updateSendMessageButton();
-});
-//this part makes sending work
+messageBox.addEventListener('input', updateSendMessageButton);
+
 sendMessageButton.addEventListener('click', () => {
   sendMessage(messageBox.value);
 });
 
-//function that runs when page loads
 function init() {
   updateState();
 }
