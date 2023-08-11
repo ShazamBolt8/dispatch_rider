@@ -1,0 +1,186 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  caret-color: white;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+    'Lucida Sans', Arial, sans-serif;
+}
+*:focus {
+  outline: none;
+}
+*::placeholder {
+  color: rgb(156, 156, 156);
+}
+*::-webkit-scrollbar {
+  background: #2e3137;
+  width: 0.2em;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgb(20, 20, 20);
+  background-clip: padding-box;
+}
+html,
+body {
+  height: 500px;
+  width: 500px;
+}
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+  background-color: #424549;
+}
+.addHook,
+.toggleHook,
+.shareHook {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  color: #fff;
+}
+.addHook input[type='text'] {
+  width: auto;
+  background: #282b30;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+}
+.addHook input[type='submit'] {
+  background: #5766f2;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  color: #fff;
+  font-weight: bold;
+}
+
+input[type='text']:hover,
+#prevHook:hover,
+#nextHook:hover,
+#messageBox:hover,
+.shareHook button:hover,
+input[type='text']:focus,
+#prevHook:focus,
+#nextHook:focus,
+#messageBox:focus,
+.shareHook button:focus {
+  background: #202225;
+}
+#prevHook:active,
+#nextHook:active,
+.shareHook button:active {
+  background: #0b0c0e;
+}
+
+input[type='submit']:hover,
+#sendMessage:hover {
+  background: #4b5beb;
+}
+#sendMessage:active,
+input[type='submit']:active {
+  background: #3242cf;
+}
+
+.shareHook button {
+  font-weight: bold;
+  border-radius: 8px;
+  background: #282b30;
+  padding: 12px;
+  width: 48%;
+  font-size: 14px;
+  color: #fff;
+  border: none;
+}
+#currentHook {
+  font-size: 19px;
+  min-width: 50%;
+  max-width: 50%;
+  text-align: center;
+  font-weight: bold;
+}
+#prevHook,
+#nextHook {
+  font-weight: bolder;
+  border-radius: 8px;
+  background: #282b30;
+  padding: 12px;
+  width: 20%;
+  font-size: 14px;
+  color: #fff;
+  border: none;
+}
+.mainMessageArea {
+  width: 100%;
+  flex-grow: 2;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  color: #fff;
+}
+#messageBox {
+  border: none;
+  resize: none;
+  width: 100%;
+  flex-grow: 1;
+  color: #fff;
+  border-radius: 0;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  background: #282b30;
+}
+#sendMessage {
+  background-color: #5766f2;
+  width: 100%;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bolder;
+  border-radius: 0;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  color: #fff;
+}
+#notification {
+  position: absolute;
+  width: 60%;
+  height: auto;
+  align-self: center;
+  text-align: justify;
+  z-index: 3;
+  bottom: 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  padding: 12px;
+  color: white;
+  font-weight: bold;
+  animation: toUp 500ms cubic-bezier(0.2, 0.2, 0.2, 0.5);
+  display: none;
+}
+.success {
+  background: #06a151;
+}
+.warn {
+  background: #d7511d;
+}
+.error {
+  background: #eb2433;
+}
+@keyframes toUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
