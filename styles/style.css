@@ -116,6 +116,11 @@ input[type='submit']:active {
   color: #fff;
   border: none;
 }
+#prevHook:disabled,
+#nextHook:disabled,
+.shareHook button:disabled {
+  background: #36393e;
+}
 .mainMessageArea {
   width: 100%;
   flex-grow: 2;
@@ -140,7 +145,7 @@ input[type='submit']:active {
   background: #282b30;
 }
 #sendMessage {
-  background-color: #5766f2;
+  background: #5766f2;
   width: 100%;
   border: none;
   padding: 12px;
@@ -151,19 +156,20 @@ input[type='submit']:active {
   border-bottom-left-radius: 8px;
   color: #fff;
 }
+#sendMessage:disabled {
+  background: #7885ff;
+}
 #notification {
   position: absolute;
-  width: 60%;
+  max-width: 60%;
   height: auto;
   align-self: center;
-  text-align: justify;
   z-index: 3;
   bottom: 30px;
   border-radius: 8px;
   font-size: 16px;
   padding: 12px;
   color: white;
-  font-weight: bold;
   animation: toUp 500ms cubic-bezier(0.2, 0.2, 0.2, 0.5);
   display: none;
 }
