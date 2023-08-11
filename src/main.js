@@ -174,6 +174,7 @@ function toggleWebhookData(index) {
     selectedHook.name = webhook.name;
     selectedHook.url = webhook.url;
   });
+  updateCurrentHook();
 }
 
 prevHook.addEventListener('click', () => {
