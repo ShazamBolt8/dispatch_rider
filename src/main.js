@@ -166,7 +166,7 @@ shareAllHook.addEventListener('click', () => {
   });
 });
 
-//fot toggling
+//for toggling
 function toggleWebhookData(index) {
   getWebhooksFromStorage((webhooks) => {
     const webhook = webhooks[index];
