@@ -1,6 +1,10 @@
+//defaults
+let numberOfHook = 0;
+let selectedHook = { index: 0, name: null, url: null };
+let layoutType = "message"; //message | embed
+
 //extra options
 const setting = document.getElementById("setting");
-const openEmbed = document.getElementById("openEmbed");
 const shareCurrentTab = document.getElementById("shareCurrentTab");
 const shareAllTab = document.getElementById("shareAllTab");
 
@@ -8,15 +12,22 @@ const shareAllTab = document.getElementById("shareAllTab");
 const prevHook = document.getElementById("prevHook");
 const currentHook = document.getElementById("currentHook");
 const nextHook = document.getElementById("nextHook");
-let numberOfHook = 0;
-let selectedHook = { index: 0, name: null, url: null };
 
 //main messaging area
+const messageArea = document.getElementById("messageArea");
 const messageBox = document.getElementById("messageBox");
 const sendMessageButton = document.getElementById("sendMessage");
 
 //chrome storage
 const storage = chrome.storage.sync;
+
+//embed area
+const embedArea = document.getElementById("embedArea");
+
+//for changing layout
+const changeLayout = document.getElementById("changeLayout");
+const changeLayoutIcon = document.getElementById("changeLayoutIcon");
+const changeLayoutText = document.getElementById("changeLayoutText");
 
 // types: success, warn, error
 function notify(message = "Message sent successfully.", type = "success") {
@@ -44,6 +55,21 @@ function updateSendMessageButton() {
   });
 }
 
+//to hide or show message or embed area
+function updateLayoutType() {
+  if (layoutType == "message") {
+    messageArea.style.display = "flex";
+    embedArea.style.display = "none";
+    changeLayoutText.innerText = "Send Embed";
+    changeLayoutIcon.setAttribute("data", "/assets/send_embed.svg");
+  } else if (layoutType == "embed") {
+    embedArea.style.display = "flex";
+    messageArea.style.display = "none";
+    changeLayoutText.innerText = "Send Message";
+    changeLayoutIcon.setAttribute("data", "/assets/send_message.svg");
+  }
+}
+
 //to update toggle menu
 function updateCurrentHook() {
   getWebhooksFromStorage((webhooks) => {
@@ -63,10 +89,11 @@ function updateCurrentHook() {
   });
 }
 
-//to update both
+//to update whole UI
 function updateState() {
   updateSendMessageButton();
   updateCurrentHook();
+  updateLayoutType();
 }
 
 function sendMessage(message) {
@@ -102,6 +129,16 @@ function sendMessage(message) {
 
 setting.addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
+});
+
+//changing layout
+changeLayout.addEventListener("click", () => {
+  if (layoutType == "message") {
+    layoutType = "embed";
+  } else if (layoutType == "embed") {
+    layoutType = "message";
+  }
+  updateLayoutType();
 });
 
 //share only current tab

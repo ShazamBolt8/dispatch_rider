@@ -10,9 +10,9 @@
 		<div class="container">
 			<!--The place for extra buttons-->
 			<div class="extraOptions">
-				<button id="openEmbed">
-					<object data="/assets/make_embed.svg" type="image/svg+xml"></object>
-					Send Embed
+				<button id="changeLayout">
+					<object id="changeLayoutIcon" type="image/svg+xml"></object>
+					<span id="changeLayoutText"></span>
 				</button>
 				<button id="shareCurrentTab">
 					<object data="/assets/share_current.svg" type="image/svg+xml"></object>
@@ -34,11 +34,11 @@
 				<button id="nextHook">Next</button>
 			</div>
 			<!--The place to add new messages-->
-			<div class="mainMessageArea">
+			<div id="messageArea" class="mainMessageArea">
 				<textarea id="messageBox" placeholder="Message Here"></textarea>
 				<input id="sendMessage" type="submit" value="Send Message" />
 			</div>
-			<form class="mainEmbedArea">
+			<form id="embedArea" class="mainEmbedArea">
 				<div class="group">
 					<input type="text" placeholder="Your name" required>
 					<input type="text" placeholder="Your avatar URL (optional)">
