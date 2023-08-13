@@ -1,0 +1,87 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  caret-color: white;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+html,
+body {
+  background-color: #424549;
+  padding: 8px;
+  color: white;
+}
+
+#hooksList {
+  padding: 8px 0;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+}
+
+.hookCard {
+  background-color: #333;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.hookCard > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hookCard > summary > span {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.hookCard p {
+  color: #bbb;
+}
+
+.btn {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.field {
+  padding: 8px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+}
+
+.field:hover,
+.field:focus {
+  background: #202225;
+  border: none;
+}
+
+.field:focus {
+  border: none;
+  outline: #5766f2 solid 2px;
+}
+
+.btn {
+  background: #5766f2;
+  color: white;
+  border: none;
+}
+.btn:hover {
+  background: #4b5beb;
+}
+.btn:active {
+  background: #3242cf;
+}
+
+.btn-danger {
+  background: #ff0000;
+}
+
+.btn-danger:hover {
+  background: #dd0000;
+}

@@ -5,10 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Options</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="options">Test</div>
+    <!-- Adding New Webhooks -->
+    <div class="addHook">
+        <input class="field" id="webhookName" placeholder="Webhook name" type="text" />
+        <input class="field" id="webhookUrl" placeholder="Webhook URL" type="text" />
+        <input class="btn" id="addWebhook" type="submit" value="Add Hook" />
+    </div>
+    <!-- List of hooks -->
+    <div id="hooksList">
+        <!-- 
+        <details class="hookCard">
+            <summary><span>Title Example</span><button class="btn btn-danger">Delete</button></summary>
+            <p>Example Url </p>
+        </details> 
+    -->
+    </div>
 </body>
 
 </html>
