@@ -1,4 +1,6 @@
-//for sharing webhooks
+//extra options
+const setting = document.getElementById("setting");
+const openEmbed = document.getElementById("openEmbed");
 const shareCurrentTab = document.getElementById("shareCurrentTab");
 const shareAllTab = document.getElementById("shareAllTab");
 
@@ -38,9 +40,7 @@ function getWebhooksFromStorage(callback) {
 //to update accessibility of send button based on certain factors
 function updateSendMessageButton() {
   getWebhooksFromStorage((webhooks) => {
-    sendMessageButton.disabled = !(
-      webhooks.length > 0 && messageBox.value.length > 0
-    );
+    sendMessageButton.disabled = !(webhooks.length > 0 && messageBox.value.length > 0);
   });
 }
 
@@ -99,6 +99,10 @@ function sendMessage(message) {
       updateState();
     });
 }
+
+setting.addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
 
 //share only current tab
 shareCurrentTab.addEventListener("click", async () => {

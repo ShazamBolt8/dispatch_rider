@@ -118,7 +118,7 @@ input[type="submit"]:active {
 .extraOptions button:disabled {
   background: #36393e;
 }
-.mainMessageArea {
+.mainMessageArea,.mainEmbedArea {
   width: 100%;
   flex-grow: 2;
   display: flex;
@@ -127,6 +127,9 @@ input[type="submit"]:active {
   align-items: center;
   padding: 10px;
   color: #fff;
+}
+.mainMessageArea{
+  display: none;
 }
 #messageBox {
   border: none;

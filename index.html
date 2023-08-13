@@ -8,9 +8,9 @@
 	</head>
 	<body>
 		<div class="container">
-			<!--The place to share buttons-->
+			<!--The place for extra buttons-->
 			<div class="extraOptions">
-				<button>
+				<button id="openEmbed">
 					<object data="/assets/make_embed.svg" type="image/svg+xml"></object>
 					Send Embed
 				</button>
@@ -22,7 +22,8 @@
 					<object data="/assets/share_all.svg" type="image/svg+xml"></object>
 					All Tabs
 				</button>
-				<button><object data="/assets/settings.svg" type="image/svg+xml"></object>
+				<button id="setting">
+					<object data="/assets/settings.svg" type="image/svg+xml"></object>
 					Settings
 				</button>
 			</div>
@@ -36,6 +37,9 @@
 			<div class="mainMessageArea">
 				<textarea id="messageBox" placeholder="Message Here"></textarea>
 				<input id="sendMessage" type="submit" value="Send Message" />
+			</div>
+			<div class="mainEmbedArea">
+				j
 			</div>
 			<!--A box for displaying messages-->
 			<div id="notification"></div>
