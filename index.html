@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dispatch Rider</title>
-    <link rel="stylesheet" href="styles/style.css">
-  </head>
-  <body>
-    <div class="container">
-      <!--The place to add new webhooks-->
-      <div class="addHook">
-        <input id="webhookName" placeholder="Webhook name" type="text" />
-        <input id="webhookUrl" placeholder="Webhook URL" type="text" />
-        <input id="addWebhook" type="submit" value="Add Hook" />
-      </div>
-      <!--The place to share buttons-->
-      <div class="shareHook">
-        <button id="shareCurrentHook">Share Current Hook</button>
-        <button id="shareAllHook">Share All Hooks</button>
-      </div>
-      <!--The place to toggle between webhooks-->
-      <div class="toggleHook">
-        <button id="prevHook">Previous</button>
-        <div id="currentHook"></div>
-        <button id="nextHook">Next</button>
-      </div>
-      <!--The place to add new messages-->
-      <div class="mainMessageArea">
-        <textarea id="messageBox" placeholder="Message Here"></textarea>
-        <input id="sendMessage" type="submit" value="Send Message" />
-      </div>
-      <!--A box for displaying messages-->
-      <div id="notification"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dispatch Rider</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <div class="container">
+    <!--The place to add new webhooks-->
+    <div class="addHook">
+      <input id="webhookName" placeholder="Webhook name" type="text" />
+      <input id="webhookUrl" placeholder="Webhook URL" type="text" />
+      <input id="addWebhook" type="submit" value="Add Hook" />
     </div>
-    <script src="/src/main.js"></script>
-  </body>
+    <!--The place to share buttons-->
+    <div class="shareTab">
+      <button id="shareCurrentHook">
+        <object data="Assets/share-bracket-svgrepo-com.svg" type="image/svg+xml">
+          Your browser does not support SVG
+        </object>
+      </button>
+      <button id="shareAllHook">
+        <object data="Assets/share-svgrepo-com (2).svg" type="image/svg+xml">
+        Your browser does not support SVG
+      </object>
+    </button>
+    </div>
+    <!--The place to toggle between webhooks-->
+    <div class="toggleHook">
+      <button id="prevHook">Previous</button>
+      <div id="currentHook"></div>
+      <button id="nextHook">Next</button>
+    </div>
+    <!--The place to add new messages-->
+    <div class="mainMessageArea">
+      <textarea id="messageBox" placeholder="Message Here"></textarea>
+      <input id="sendMessage" type="submit" value="Send Message" />
+    </div>
+    <!--A box for displaying messages-->
+    <div id="notification"></div>
+  </div>
+  <script src="/src/main.js"></script>
+</body>
+
 </html>
