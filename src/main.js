@@ -55,14 +55,10 @@ function updateCurrentHook() {
       numberOfHook = webhooks.length;
       prevHook.disabled = index === 0;
       nextHook.disabled = index === numberOfHook - 1;
-      shareCurrentTab.disabled = false;
-      shareAllTab.disabled = false;
     } else {
       currentHook.innerText = "No webhook is set.";
       prevHook.disabled = true;
       nextHook.disabled = true;
-      shareCurrentTab.disabled = true;
-      shareAllTab.disabled = true;
     }
   });
 }
