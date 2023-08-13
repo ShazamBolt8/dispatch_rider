@@ -7,13 +7,12 @@ const addWebhook = document.getElementById('addWebhook');
 const shareCurrentHook = document.getElementById('shareCurrentHook');
 const shareAllHook = document.getElementById('shareAllHook');
 
-//for toggling between webhooks
+//for navigation between webhooks
 const prevHook = document.getElementById('prevHook');
 const currentHook = document.getElementById('currentHook');
 const nextHook = document.getElementById('nextHook');
-let currentIndex = 0;
 let numberOfHook = 0;
-let selectedHook = {};
+let selectedHook = { index: 0, name: null, url: null };
 
 //main messaging area
 const messageBox = document.getElementById('messageBox');
@@ -44,7 +43,9 @@ function getWebhooksFromStorage(callback) {
 //to update accessibility of send button based on certain factors
 function updateSendMessageButton() {
   getWebhooksFromStorage((webhooks) => {
-    sendMessageButton.disabled = !( webhooks.length > 0 && messageBox.value.length > 0 );
+    sendMessageButton.disabled = !(
+      webhooks.length > 0 && messageBox.value.length > 0
+    );
   });
 }
 
@@ -52,14 +53,13 @@ function updateSendMessageButton() {
 function updateCurrentHook() {
   getWebhooksFromStorage((webhooks) => {
     if (webhooks.length > 0) {
-      if (!selectedHook.name) {
-        selectedHook.name = webhooks[0].name;
-        selectedHook.url = webhooks[0].url;
-      }
+      let index = selectedHook.index; //currently selected hook's index
+      selectedHook.name = webhooks[index].name;
+      selectedHook.url = webhooks[index].url;
       currentHook.innerText = selectedHook.name;
       numberOfHook = webhooks.length;
-      prevHook.disabled = currentIndex === 0;
-      nextHook.disabled = currentIndex === numberOfHook - 1;
+      prevHook.disabled = index === 0;
+      nextHook.disabled = index === numberOfHook - 1;
       shareCurrentHook.disabled = false;
       shareAllHook.disabled = false;
     } else {
@@ -166,26 +166,16 @@ shareAllHook.addEventListener('click', () => {
   });
 });
 
-//for toggling
-function toggleWebhookData(index) {
-  getWebhooksFromStorage((webhooks) => {
-    const webhook = webhooks[index];
-    currentHook.innerText = webhook.name;
-    selectedHook.name = webhook.name;
-    selectedHook.url = webhook.url;
-  });
-  updateCurrentHook();
-}
-
 prevHook.addEventListener('click', () => {
-  if (currentIndex > 0) {
-    toggleWebhookData(--currentIndex);
+  if (selectedHook.index > 0) {
+    //updateCurrentHook() doesn't take any arguments, valid is incremented/decremented in the call, so it becomes a one-liner
+    updateCurrentHook(--selectedHook.index);
   }
 });
 
 nextHook.addEventListener('click', () => {
-  if (currentIndex < numberOfHook - 1) {
-    toggleWebhookData(++currentIndex);
+  if (selectedHook.index < numberOfHook - 1) {
+    updateCurrentHook(++selectedHook.index);
   }
 });
 
