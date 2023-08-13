@@ -38,9 +38,18 @@
 				<textarea id="messageBox" placeholder="Message Here"></textarea>
 				<input id="sendMessage" type="submit" value="Send Message" />
 			</div>
-			<div class="mainEmbedArea">
-				j
-			</div>
+			<form class="mainEmbedArea">
+				<div class="group">
+					<input type="text" placeholder="Your name" required>
+					<input type="text" placeholder="Your avatar URL (optional)">
+				</div>
+				<input type="text" placeholder="Title" required>
+				<textarea placeholder="Description" required></textarea>
+				<input type="text" placeholder="URL (optional)">
+				<input type="text" placeholder="Thumbnail URL (optional)">
+				<input type="text" placeholder="Footer (optional)">
+				<input type="submit" value="Send Embed">
+			</form>
 			<!--A box for displaying messages-->
 			<div id="notification"></div>
 		</div>
