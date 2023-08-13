@@ -75,10 +75,12 @@ input[type="text"]:focus,
 }
 
 input[type="submit"]:hover,
+#sendMessage:hover,
 #sendMessage:hover {
   background: #4b5beb;
 }
 #sendMessage:active,
+#sendEmbed:active,
 input[type="submit"]:active {
   background: #3242cf;
 }
@@ -152,7 +154,9 @@ input[type="submit"]:active {
   font-size: 15px;
   background: #282b30;
 }
-#sendMessage, input[type="submit"] {
+#sendMessage,
+input[type="submit"],
+#sendEmbed {
   background: #5766f2;
   width: 100%;
   border: none;
@@ -164,7 +168,9 @@ input[type="submit"]:active {
   border-bottom-left-radius: 8px;
   color: #fff;
 }
-#sendMessage:disabled {
+#sendMessage:disabled,
+input[type="submit"]:disabled,
+#sendEmbed:disabled {
   background: #7885ff;
 }
 #notification {
@@ -196,7 +202,7 @@ input[type="submit"]:active {
 .mainEmbedArea .group input[type="text"] {
   width: 50%;
 }
-.mainEmbedArea input[type="text"]{
+.mainEmbedArea input[type="text"] {
   width: 100%;
 }
 .mainEmbedArea textarea {
@@ -210,7 +216,7 @@ input[type="submit"]:active {
   background: #282b30;
   border-radius: 8px;
 }
-.mainEmbedArea input[type="submit"]{
+#sendEmbed {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }

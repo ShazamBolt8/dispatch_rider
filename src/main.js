@@ -23,6 +23,7 @@ const storage = chrome.storage.sync;
 
 //embed area
 const embedArea = document.getElementById("embedArea");
+const sendEmbedButton = document.getElementById("sendEmbed");
 
 //for changing layout
 const changeLayout = document.getElementById("changeLayout");
@@ -48,10 +49,30 @@ function getWebhooksFromStorage(callback) {
   });
 }
 
+//to loop over input fields of embed form with required attribute set
+function loopOverRequiredFormFields(callback) {
+  const requiredFields = embedArea.querySelectorAll("[required]");
+  for (let i = 0; i < requiredFields.length; i++) {
+    const field = requiredFields[i];
+    callback(field);
+  }
+}
+
 //to update accessibility of send button based on certain factors
-function updateSendMessageButton() {
+function updateSendButton() {
   getWebhooksFromStorage((webhooks) => {
-    sendMessageButton.disabled = !(webhooks.length > 0 && messageBox.value.length > 0);
+    //for message
+    const messageNotEmpty = messageBox.value.trim().length > 0;
+    sendMessageButton.disabled = !(webhooks.length > 0 && messageNotEmpty);
+    //for embed
+    let isFieldEmpty = false;
+    loopOverRequiredFormFields((el) => {
+      if (el.value.trim().length == 0) {
+        isFieldEmpty = true;
+        return;
+      }
+    });
+    sendEmbedButton.disabled = !(webhooks.length > 0 && !isFieldEmpty);
   });
 }
 
@@ -91,7 +112,7 @@ function updateCurrentHook() {
 
 //to update whole UI
 function updateState() {
-  updateSendMessageButton();
+  updateSendButton();
   updateCurrentHook();
   updateLayoutType();
 }
@@ -145,7 +166,7 @@ changeLayout.addEventListener("click", () => {
 shareCurrentTab.addEventListener("click", async () => {
   const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
   messageBox.value += `${currTab.url}\n`;
-  updateSendMessageButton();
+  updateSendButton();
 });
 
 //share all tabs
@@ -153,7 +174,7 @@ shareAllTab.addEventListener("click", async () => {
   const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
   const tabs = allTabs.map((tab) => tab.url).join("\n");
   messageBox.value += `${tabs}\n`;
-  updateSendMessageButton();
+  updateSendButton();
 });
 
 prevHook.addEventListener("click", () => {
@@ -168,8 +189,14 @@ nextHook.addEventListener("click", () => {
   }
 });
 
-messageBox.addEventListener("input", updateSendMessageButton);
-messageBox.addEventListener("change", updateSendMessageButton);
+messageBox.addEventListener("input", updateSendButton);
+messageBox.addEventListener("change", updateSendButton);
+loopOverRequiredFormFields((el) => {
+  el.addEventListener("input", updateSendButton);
+});
+loopOverRequiredFormFields((el) => {
+  el.addEventListener("change", updateSendButton);
+});
 
 sendMessageButton.addEventListener("click", () => {
   sendMessage(messageBox.value);
