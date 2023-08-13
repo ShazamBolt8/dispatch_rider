@@ -4,8 +4,8 @@ const webhookUrl = document.getElementById('webhookUrl');
 const addWebhook = document.getElementById('addWebhook');
 
 //for sharing webhooks
-const shareCurrentTab = document.getElementById('shareCurrentHook');
-const shareAllTab = document.getElementById('shareAllHook');
+const shareCurrentTab = document.getElementById('shareCurrentTab');
+const shareAllTab = document.getElementById('shareAllTab');
 
 //for navigation between webhooks
 const prevHook = document.getElementById('prevHook');
@@ -60,14 +60,14 @@ function updateCurrentHook() {
       numberOfHook = webhooks.length;
       prevHook.disabled = index === 0;
       nextHook.disabled = index === numberOfHook - 1;
-      shareCurrentHook.disabled = false;
-      shareAllHook.disabled = false;
+      shareCurrentTab.disabled = false;
+      shareAllTab.disabled = false;
     } else {
       currentHook.innerText = 'No webhook is set.';
       prevHook.disabled = true;
       nextHook.disabled = true;
-      shareCurrentHook.disabled = true;
-      shareAllHook.disabled = true;
+      shareCurrentTab.disabled = true;
+      shareAllTab.disabled = true;
     }
   });
 }
@@ -140,7 +140,7 @@ shareCurrentTab.addEventListener('click', async () => {
 shareAllTab.addEventListener('click', async () => {
   const allTabs = await chrome.runtime.sendMessage({ message: 'allTab' });
   const tabs = allTabs.map((tab) => tab.url).join('\n');
-  messageBox.value += tabs;
+  messageBox.value += `${tabs}\n`;
   updateSendMessageButton();
 });
 

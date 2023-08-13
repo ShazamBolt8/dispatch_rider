@@ -73,12 +73,6 @@ input[type='text']:focus,
 .shareTab button:focus {
   background: #202225;
 }
-
-.shareTab button:hover,
-input[type='submit']:hover {
-  background: #4b5beb;
-}
-
 #prevHook:active,
 #nextHook:active,
 .shareTab button:active {
@@ -98,15 +92,23 @@ input[type='submit']:active {
   font-weight: bold;
   border-radius: 8px;
   background: #282b30;
-  padding: 12px;
+  padding: 2px;
   width: 48%;
   font-size: 14px;
   color: #fff;
   border: none;
-  background: none
-  center center no-repeat;
-  background-size: contain;
+  height: 40px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
+.shareTab button object{
+  height: 30px;
+  width: 30px;
+}
+
 #currentHook {
   font-size: 19px;
   min-width: 50%;
