@@ -34,7 +34,7 @@ body {
 }
 .addHook,
 .toggleHook,
-.shareHook {
+.shareTab {
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
@@ -65,17 +65,23 @@ input[type='text']:hover,
 #prevHook:hover,
 #nextHook:hover,
 #messageBox:hover,
-.shareHook button:hover,
+.shareTab button:hover,
 input[type='text']:focus,
 #prevHook:focus,
 #nextHook:focus,
 #messageBox:focus,
-.shareHook button:focus {
+.shareTab button:focus {
   background: #202225;
 }
+
+.shareTab button:hover,
+input[type='submit']:hover {
+  background: #4b5beb;
+}
+
 #prevHook:active,
 #nextHook:active,
-.shareHook button:active {
+.shareTab button:active {
   background: #0b0c0e;
 }
 
@@ -88,7 +94,7 @@ input[type='submit']:active {
   background: #3242cf;
 }
 
-.shareHook button {
+.shareTab button {
   font-weight: bold;
   border-radius: 8px;
   background: #282b30;
@@ -97,6 +103,9 @@ input[type='submit']:active {
   font-size: 14px;
   color: #fff;
   border: none;
+  background: none
+  center center no-repeat;
+  background-size: contain;
 }
 #currentHook {
   font-size: 19px;
@@ -118,7 +127,7 @@ input[type='submit']:active {
 }
 #prevHook:disabled,
 #nextHook:disabled,
-.shareHook button:disabled {
+.shareTab button:disabled {
   background: #36393e;
 }
 .mainMessageArea {
