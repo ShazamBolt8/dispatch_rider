@@ -9,7 +9,5 @@
   "background": {
     "service_worker": "src/service_worker.js"
   },
-  "permissions": [
-    "storage"
-  ]
+  "permissions": ["storage", "tabs"]
 }
