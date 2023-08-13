@@ -24,6 +24,8 @@ const storage = chrome.storage.sync;
 //embed area
 const embedArea = document.getElementById("embedArea");
 const sendEmbedButton = document.getElementById("sendEmbed");
+const embedDescriptionField = document.getElementById("embedDescriptionField");
+const embedURLField = document.getElementById("embedURLField");
 
 //for changing layout
 const changeLayout = document.getElementById("changeLayout");
@@ -83,11 +85,13 @@ function updateLayoutType() {
     embedArea.style.display = "none";
     changeLayoutText.innerText = "Send Embed";
     changeLayoutIcon.setAttribute("data", "/assets/send_embed.svg");
+    document.body.style.height = "500px";
   } else if (layoutType == "embed") {
     embedArea.style.display = "flex";
     messageArea.style.display = "none";
     changeLayoutText.innerText = "Send Message";
     changeLayoutIcon.setAttribute("data", "/assets/send_message.svg");
+    document.body.style.height = "600px";
   }
 }
 
@@ -165,15 +169,16 @@ changeLayout.addEventListener("click", () => {
 //share only current tab
 shareCurrentTab.addEventListener("click", async () => {
   const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
-  messageBox.value += `${currTab.url}\n`;
+  let tab = `${currTab.url}\n`;
+  layoutType == "message" ? messageBox.value += tab : embedURLField.value = tab;
   updateSendButton();
 });
 
 //share all tabs
 shareAllTab.addEventListener("click", async () => {
   const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
-  const tabs = allTabs.map((tab) => tab.url).join("\n");
-  messageBox.value += `${tabs}\n`;
+  const tab = allTabs.map((tab) => tab.url).join("\n")+"\n";
+  layoutType == "message" ? messageBox.value += tab : embedDescriptionField.value += tab;
   updateSendButton();
 });
 

@@ -13,7 +13,7 @@
 }
 *::-webkit-scrollbar {
   background: #2e3137;
-  width: 0.2em;
+  width: 0.1em;
 }
 *::-webkit-scrollbar-thumb {
   background: rgb(20, 20, 20);
@@ -23,6 +23,8 @@ html,
 body {
   height: 500px;
   width: 500px;
+  background-color: #424549;
+  transition: all 800ms;
 }
 .container {
   height: 100%;
