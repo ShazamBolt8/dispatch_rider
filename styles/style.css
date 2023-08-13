@@ -33,7 +33,7 @@ body {
   background-color: #424549;
 }
 .toggleHook,
-.shareTab {
+.extraOptions {
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
@@ -47,17 +47,17 @@ input[type="text"]:hover,
 #prevHook:hover,
 #nextHook:hover,
 #messageBox:hover,
-.shareTab button:hover,
+.extraOptions button:hover,
 input[type="text"]:focus,
 #prevHook:focus,
 #nextHook:focus,
 #messageBox:focus,
-.shareTab button:focus {
+.extraOptions button:focus {
   background: #202225;
 }
 #prevHook:active,
 #nextHook:active,
-.shareTab button:active {
+.extraOptions button:active {
   background: #0b0c0e;
 }
 
@@ -70,7 +70,7 @@ input[type="submit"]:active {
   background: #3242cf;
 }
 
-.shareTab button {
+.extraOptions button {
   font-weight: bold;
   border-radius: 8px;
   background: #282b30;
@@ -86,7 +86,7 @@ input[type="submit"]:active {
   align-items: center;
   gap: 8px;
 }
-.shareTab button object {
+.extraOptions button object {
   height: 30px;
   width: 30px;
 }
@@ -111,7 +111,7 @@ input[type="submit"]:active {
 }
 #prevHook:disabled,
 #nextHook:disabled,
-.shareTab button:disabled {
+.extraOptions button:disabled {
   background: #36393e;
 }
 .mainMessageArea {
