@@ -89,6 +89,7 @@ input[type="submit"]:active {
 .extraOptions button object {
   height: 30px;
   width: 30px;
+  pointer-events: none;
 }
 
 #currentHook {
