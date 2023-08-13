@@ -2,7 +2,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === 'currentTab') {
     chrome.tabs.query({ active: true }, ([currTab]) => {
       sendResponse(currTab);
-      console.log(currTab.url);
     });
   } else if (request.message === 'allTab') {
     chrome.tabs.query({}, (allTab) => {

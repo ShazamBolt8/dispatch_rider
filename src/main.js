@@ -1,40 +1,40 @@
 //for adding new hooks
-const webhookName = document.getElementById("webhookName");
-const webhookUrl = document.getElementById("webhookUrl");
-const addWebhook = document.getElementById("addWebhook");
+const webhookName = document.getElementById('webhookName');
+const webhookUrl = document.getElementById('webhookUrl');
+const addWebhook = document.getElementById('addWebhook');
 
 //for sharing webhooks
-const shareCurrentTab = document.getElementById("shareCurrentHook");
-const shareAllTab = document.getElementById("shareAllHook");
+const shareCurrentTab = document.getElementById('shareCurrentHook');
+const shareAllTab = document.getElementById('shareAllHook');
 
 //for navigation between webhooks
-const prevHook = document.getElementById("prevHook");
-const currentHook = document.getElementById("currentHook");
-const nextHook = document.getElementById("nextHook");
+const prevHook = document.getElementById('prevHook');
+const currentHook = document.getElementById('currentHook');
+const nextHook = document.getElementById('nextHook');
 let numberOfHook = 0;
 let selectedHook = { index: 0, name: null, url: null };
 
 //main messaging area
-const messageBox = document.getElementById("messageBox");
-const sendMessageButton = document.getElementById("sendMessage");
+const messageBox = document.getElementById('messageBox');
+const sendMessageButton = document.getElementById('sendMessage');
 
 //chrome storage
 const storage = chrome.storage.sync;
 
 // types: success, warn, error
-function notify(message = "Message sent successfully.", type = "success") {
-  const notification = document.getElementById("notification");
+function notify(message = 'Message sent successfully.', type = 'success') {
+  const notification = document.getElementById('notification');
   notification.innerText = message;
   notification.className = type; // Use className for cleaner class assignment
-  notification.style.display = "block";
+  notification.style.display = 'block';
   setTimeout(() => {
-    notification.style.display = "none";
-    notification.className = ""; // Clear classes
+    notification.style.display = 'none';
+    notification.className = ''; // Clear classes
   }, 2000);
 }
 
 function getWebhooksFromStorage(callback) {
-  storage.get(["webhook"], ({ webhook }) => {
+  storage.get(['webhook'], ({ webhook }) => {
     const webhooks = webhook || [];
     callback(webhooks);
   });
@@ -63,7 +63,7 @@ function updateCurrentHook() {
       shareCurrentHook.disabled = false;
       shareAllHook.disabled = false;
     } else {
-      currentHook.innerText = "No webhook is set.";
+      currentHook.innerText = 'No webhook is set.';
       prevHook.disabled = true;
       nextHook.disabled = true;
       shareCurrentHook.disabled = true;
@@ -80,14 +80,14 @@ function updateState() {
 
 function sendMessage(message) {
   if (message.length <= 0) {
-    notify("Message cannot be empty.", "error");
+    notify('Message cannot be empty.', 'error');
     return;
   }
 
   fetch(selectedHook.url, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       content: message,
@@ -97,12 +97,12 @@ function sendMessage(message) {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      notify(`Message sent to ${selectedHook.name} successfully.`, "success");
-      messageBox.value = "";
+      notify(`Message sent to ${selectedHook.name} successfully.`, 'success');
+      messageBox.value = '';
     })
     .catch((error) => {
-      notify("An error occurred: " + error.message, "error");
-      console.error("An error occurred:", error.message);
+      notify('An error occurred: ' + error.message, 'error');
+      console.error('An error occurred:', error.message);
     })
     .finally(() => {
       updateState();
@@ -110,12 +110,12 @@ function sendMessage(message) {
 }
 
 //adding the webhooks
-addWebhook.addEventListener("click", () => {
+addWebhook.addEventListener('click', () => {
   const trimmedHookName = webhookName.value.trim();
   const trimmedHookUrl = webhookUrl.value.trim();
 
   if (trimmedHookName.length === 0 || trimmedHookUrl.length === 0) {
-    notify("Webhook name and URL are required.", "warn");
+    notify('Webhook name and URL are required.', 'warn');
     return;
   }
 
@@ -123,42 +123,43 @@ addWebhook.addEventListener("click", () => {
     //proceeding to add
     webhooks.push({ name: trimmedHookName, url: trimmedHookUrl });
     storage.set({ webhook: webhooks });
-    notify("Webhook added successfully.", "success");
-    webhookName.value = webhookUrl.value = "";
+    notify('Webhook added successfully.', 'success');
+    webhookName.value = webhookUrl.value = '';
     updateState();
   });
 });
 
 //share only current tab
-shareCurrentTab.addEventListener("click", async () => {
-  const req = { message: "currentTab" };
-  const currTab = await chrome.runtime.sendMessage(req);
+shareCurrentTab.addEventListener('click', async () => {
+  const currTab = await chrome.runtime.sendMessage({ message: 'currentTab' });
   messageBox.value += `${currTab.url}\n`;
+  updateSendMessageButton();
 });
 
 //share all tabs
-shareAllTab.addEventListener("click", async () => {
-  const req = { message: "allTab" };
-  const allTabs = await chrome.runtime.sendMessage(req);
-  const tabs = allTabs.map((tab) => tab.url).join("\n");
+shareAllTab.addEventListener('click', async () => {
+  const allTabs = await chrome.runtime.sendMessage({ message: 'allTab' });
+  const tabs = allTabs.map((tab) => tab.url).join('\n');
   messageBox.value += tabs;
+  updateSendMessageButton();
 });
 
-prevHook.addEventListener("click", () => {
+prevHook.addEventListener('click', () => {
   if (selectedHook.index > 0) {
     updateCurrentHook(--selectedHook.index);
   }
 });
 
-nextHook.addEventListener("click", () => {
+nextHook.addEventListener('click', () => {
   if (selectedHook.index < numberOfHook - 1) {
     updateCurrentHook(++selectedHook.index);
   }
 });
 
-messageBox.addEventListener("input", updateSendMessageButton);
+messageBox.addEventListener('input', updateSendMessageButton);
+messageBox.addEventListener('change', updateSendMessageButton);
 
-sendMessageButton.addEventListener("click", () => {
+sendMessageButton.addEventListener('click', () => {
   sendMessage(messageBox.value);
 });
 
