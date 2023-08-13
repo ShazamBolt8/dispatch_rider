@@ -168,7 +168,7 @@ shareAllHook.addEventListener('click', () => {
 
 prevHook.addEventListener('click', () => {
   if (selectedHook.index > 0) {
-    //updateCurrentHook() doesn't take any arguments, valid is incremented/decremented in the call, so it becomes a one-liner
+    //updateCurrentHook() doesn't take any arguments, value is incremented/decremented in the call, so it becomes a one-liner
     updateCurrentHook(--selectedHook.index);
   }
 });
