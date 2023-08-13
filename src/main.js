@@ -4,8 +4,8 @@ const webhookUrl = document.getElementById("webhookUrl");
 const addWebhook = document.getElementById("addWebhook");
 
 //for sharing webhooks
-const shareCurrentPage = document.getElementById("shareCurrentHook");
-const shareAllPages = document.getElementById("shareAllHook");
+const shareCurrentTab = document.getElementById("shareCurrentHook");
+const shareAllTab = document.getElementById("shareAllHook");
 
 //for navigation between webhooks
 const prevHook = document.getElementById("prevHook");
@@ -129,37 +129,23 @@ addWebhook.addEventListener("click", () => {
   });
 });
 
-//sharing current tab
-shareCurrentPage.addEventListener("click", async () => {
+//share only current tab
+shareCurrentTab.addEventListener("click", async () => {
   const req = { message: "currentTab" };
   const currTab = await chrome.runtime.sendMessage(req);
-
-  //TODO - add error handling and send embed
-  // const embed = {
-  //   title: currTab.title,
-  //   description: currTab.url,
-  //   url: currTab.url,
-  // };
-  messageBox.value += currTab.url;
+  messageBox.value += `${currTab.url}\n`;
 });
 
-//sharing all tabs
-shareAllPages.addEventListener("click", async () => {
-  const req = { message: "allTabs" };
+//share all tabs
+shareAllTab.addEventListener("click", async () => {
+  const req = { message: "allTab" };
   const allTabs = await chrome.runtime.sendMessage(req);
-
-  //TODO - add error handling and send embed
-  // const embed = {
-  //   title: "All tabs",
-  //   description: allTabs.map((tab) => tab.url).join("\n"),
-  // };
-  const result = allTabs.map((tab) => tab.url).join("\n");
-  messageBox.value += result;
+  const tabs = allTabs.map((tab) => tab.url).join("\n");
+  messageBox.value += tabs;
 });
 
 prevHook.addEventListener("click", () => {
   if (selectedHook.index > 0) {
-    //updateCurrentHook() doesn't take any arguments, value is incremented/decremented in the call, so it becomes a one-liner
     updateCurrentHook(--selectedHook.index);
   }
 });
