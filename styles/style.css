@@ -91,7 +91,7 @@ input[type="submit"]:active {
   font-weight: bold;
   border-radius: 8px;
   background: #282b30;
-  padding: 2px 2px;
+  padding: 2px;
   flex-grow: 1;
   font-size: 14px;
   color: #fff;
@@ -121,11 +121,25 @@ input[type="submit"]:active {
   font-weight: bolder;
   border-radius: 8px;
   background: #282b30;
-  padding: 12px;
-  width: 20%;
+  padding: 8px 5px;
+  width: 25%;
   font-size: 14px;
   color: #fff;
   border: none;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+}
+#prevHook object, #nextHook object {
+  height: 23px;
+  width: 23px;
+  pointer-events: none;
+}
+#prevHook object{
+  transform: rotate(180deg);
+  pointer-events: none;
 }
 #prevHook:disabled,
 #nextHook:disabled,
@@ -169,12 +183,24 @@ input[type="submit"],
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
   color: #fff;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+#sendMessage object,
+input[type="submit"] object,
+#sendEmbed object{
+  height: 30px;
+  width: 30px;
 }
 #sendMessage:disabled,
 input[type="submit"]:disabled,
 #sendEmbed:disabled {
   background: #7885ff;
 }
+
 #notification {
   position: absolute;
   max-width: 60%;
