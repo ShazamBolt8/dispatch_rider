@@ -1,38 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dispatch Rider</title>
-    <link rel="stylesheet" href="styles/style.css" />
-  </head>
-  <body>
-    <div class="container">
-      <!--The place to share buttons-->
-      <div class="extraOptions">
-        <button id="shareCurrentTab">
-          <object data="/assets/share_current.svg"type="image/svg+xml"></object>
-          Current Tab
-        </button>
-        <button id="shareAllTab">
-          <object data="/assets/share_all.svg" type="image/svg+xml"></object>
-          All Tabs
-        </button>
-      </div>
-      <!--The place to toggle between webhooks-->
-      <div class="toggleHook">
-        <button id="prevHook">Previous</button>
-        <div id="currentHook"></div>
-        <button id="nextHook">Next</button>
-      </div>
-      <!--The place to add new messages-->
-      <div class="mainMessageArea">
-        <textarea id="messageBox" placeholder="Message Here"></textarea>
-        <input id="sendMessage" type="submit" value="Send Message" />
-      </div>
-      <!--A box for displaying messages-->
-      <div id="notification"></div>
-    </div>
-    <script src="/src/main.js"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Dispatch Rider</title>
+		<link rel="stylesheet" href="styles/style.css" />
+	</head>
+	<body>
+		<div class="container">
+			<!--The place to share buttons-->
+			<div class="extraOptions">
+				<button>
+					<object data="/assets/make_embed.svg" type="image/svg+xml"></object>
+					Send Embed
+				</button>
+				<button id="shareCurrentTab">
+					<object data="/assets/share_current.svg" type="image/svg+xml"></object>
+					Current Tab
+				</button>
+				<button id="shareAllTab">
+					<object data="/assets/share_all.svg" type="image/svg+xml"></object>
+					All Tabs
+				</button>
+				<button><object data="/assets/settings.svg" type="image/svg+xml"></object>
+					Settings
+				</button>
+			</div>
+			<!--The place to toggle between webhooks-->
+			<div class="toggleHook">
+				<button id="prevHook">Previous</button>
+				<div id="currentHook"></div>
+				<button id="nextHook">Next</button>
+			</div>
+			<!--The place to add new messages-->
+			<div class="mainMessageArea">
+				<textarea id="messageBox" placeholder="Message Here"></textarea>
+				<input id="sendMessage" type="submit" value="Send Message" />
+			</div>
+			<!--A box for displaying messages-->
+			<div id="notification"></div>
+		</div>
+		<script src="/src/main.js"></script>
+	</body>
 </html>

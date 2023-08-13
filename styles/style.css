@@ -42,6 +42,9 @@ body {
   padding: 10px;
   color: #fff;
 }
+.extraOptions{
+  gap: 8px;
+}
 
 input[type="text"]:hover,
 #prevHook:hover,
@@ -74,8 +77,8 @@ input[type="submit"]:active {
   font-weight: bold;
   border-radius: 8px;
   background: #282b30;
-  padding: 2px;
-  width: 48%;
+  padding: 2px 2px;
+  flex-grow: 1;
   font-size: 14px;
   color: #fff;
   border: none;
@@ -87,8 +90,8 @@ input[type="submit"]:active {
   gap: 8px;
 }
 .extraOptions button object {
-  height: 30px;
-  width: 30px;
+  height: 25px;
+  width: 25px;
   pointer-events: none;
 }
 
