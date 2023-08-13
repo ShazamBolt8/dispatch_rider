@@ -1,8 +1,3 @@
-//for adding new hooks
-const webhookName = document.getElementById("webhookName");
-const webhookUrl = document.getElementById("webhookUrl");
-const addWebhook = document.getElementById("addWebhook");
-
 //for sharing webhooks
 const shareCurrentTab = document.getElementById("shareCurrentTab");
 const shareAllTab = document.getElementById("shareAllTab");
@@ -108,26 +103,6 @@ function sendMessage(message) {
       updateState();
     });
 }
-
-//adding the webhooks
-addWebhook.addEventListener("click", () => {
-  const trimmedHookName = webhookName.value.trim();
-  const trimmedHookUrl = webhookUrl.value.trim();
-
-  if (trimmedHookName.length === 0 || trimmedHookUrl.length === 0) {
-    notify("Webhook name and URL are required.", "warn");
-    return;
-  }
-
-  getWebhooksFromStorage((webhooks) => {
-    //proceeding to add
-    webhooks.push({ name: trimmedHookName, url: trimmedHookUrl });
-    storage.set({ webhook: webhooks });
-    notify("Webhook added successfully.", "success");
-    webhookName.value = webhookUrl.value = "";
-    updateState();
-  });
-});
 
 //share only current tab
 shareCurrentTab.addEventListener("click", async () => {

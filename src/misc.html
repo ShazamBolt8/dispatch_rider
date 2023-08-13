@@ -1,0 +1,33 @@
+<!-- Adding New Webhooks -->
+<div class="addHook">
+  <input id="webhookName" placeholder="Webhook name" type="text" />
+  <input id="webhookUrl" placeholder="Webhook URL" type="text" />
+  <input id="addWebhook" type="submit" value="Add Hook" />
+</div>
+<script>
+  const webhookName = document.getElementById("webhookName");
+  const webhookUrl = document.getElementById("webhookUrl");
+  const addWebhook = document.getElementById("addWebhook");
+  addWebhook.addEventListener("click", () => {
+    const trimmedHookName = webhookName.value.trim();
+    const trimmedHookUrl = webhookUrl.value.trim();
+
+    if (trimmedHookName.length === 0 || trimmedHookUrl.length === 0) {
+      notify("Webhook name and URL are required.", "warn");
+      return;
+    }
+
+    getWebhooksFromStorage((webhooks) => {
+      //proceeding to add
+      webhooks.push({ name: trimmedHookName, url: trimmedHookUrl });
+      storage.set({ webhook: webhooks });
+      notify("Webhook added successfully.", "success");
+      webhookName.value = webhookUrl.value = "";
+      updateState();
+    });
+  });
+</script>
+
+
+
+
