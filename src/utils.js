@@ -38,5 +38,4 @@ function createEmbed(title, description, authorname, footer, url, thumbnailurl, 
   return embed;
 }
 
-
 export { storage, getWebhooksFromStorage, createEmbed};

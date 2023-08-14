@@ -4,12 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dispatch Rider</title>
-    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="../styles/defaults.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
       <!--The place for extra buttons-->
-      <div class="extraOptions">
+      <div class="flex_noWrap">
         <button id="changeLayout">
           <object id="changeLayoutIcon" type="image/svg+xml"></object>
           <span id="changeLayoutText"></span>
@@ -28,7 +29,7 @@
         </button>
       </div>
       <!--The place to toggle between webhooks-->
-      <div class="toggleHook">
+      <div class="flex_noWrap">
         <button id="prevHook">
           <object data="/assets/arrow.svg" type="image/svg+xml"></object>
           <span>Prev</span>
@@ -40,14 +41,14 @@
         </button>
       </div>
       <!--The place to add new messages-->
-      <div id="messageArea" class="mainMessageArea">
+      <div id="messageArea" class="mainArea">
         <textarea id="messageBox" placeholder="Message Here"></textarea>
-        <button id="sendMessage">
+        <button class="submitButton" id="sendMessage">
           Send Message
           <object data="/assets/send.svg" type="image/svg+xml"></object>
         </button>
       </div>
-      <form id="embedArea" class="mainEmbedArea">
+      <form id="embedArea" class="mainArea">
         <div class="group">
           <input id="embedNameField" type="text" placeholder="Your name" required />
           <input id="embedAvatarField" type="text" placeholder="Your avatar URL (optional)" />
@@ -57,7 +58,7 @@
         <input id="embedURLField" type="text" placeholder="URL (optional)" />
         <input id="embedThumbnailField" type="text" placeholder="Thumbnail URL (optional)" />
         <input id="embedFooterField" type="text" placeholder="Footer (optional)" />
-        <button type="submit" id="sendEmbed">
+        <button type="submit" class="submitButton" id="sendEmbed">
           Send Embed
           <object data="/assets/send.svg" type="image/svg+xml"></object>
         </button>
@@ -65,6 +66,6 @@
       <!--A box for displaying messages-->
       <div id="notification"></div>
     </div>
-    <script src="/src/main.js"></script>
+    <script src="main.js" type="module"></script>
   </body>
 </html>
