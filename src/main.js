@@ -1,7 +1,7 @@
 //defaults
 let numberOfHook = 0;
 let selectedHook = { index: 0, name: null, url: null };
-let layoutType = "message"; //message | embed
+let layoutType = "message"; //message || embed
 
 //extra options
 const setting = document.getElementById("setting");
@@ -24,8 +24,13 @@ const storage = chrome.storage.sync;
 //embed area
 const embedArea = document.getElementById("embedArea");
 const sendEmbedButton = document.getElementById("sendEmbed");
+const embedNameField = document.getElementById("embedNameField");
+const embedAvatarField = document.getElementById("embedAvatarField");
+const embedTitleField = document.getElementById("embedTitleField");
 const embedDescriptionField = document.getElementById("embedDescriptionField");
 const embedURLField = document.getElementById("embedURLField");
+const embedThumbnailField = document.getElementById("embedThumbnailField");
+const embedFooterField = document.getElementById("embedFooterField");
 
 //for changing layout
 const changeLayout = document.getElementById("changeLayout");
@@ -116,31 +121,64 @@ function updateCurrentHook() {
 
 //to update whole UI
 function updateState() {
-  updateSendButton();
   updateCurrentHook();
   updateLayoutType();
+  updateSendButton();
 }
 
+//to create embed object
+function createEmbed(title, description, authorname, footer, url, thumbnailurl, authoravatarurl, color) {
+  const embed = {
+    title: title,
+    description: description,
+    color: color ? color : 0xbf7c00,
+    author: {
+      name: authorname,
+    },
+  };
+  if (footer) {
+    embed.footer = {
+      text: footer,
+    };
+  }
+  if (url) {
+    embed.url = url;
+  }
+  if (thumbnailurl) {
+    embed.thumbnail = {
+      url: thumbnailurl,
+    };
+  }
+  if (authoravatarurl) {
+    embed.author.icon_url = authoravatarurl;
+  }
+  return embed;
+}
+
+//methods for sending messages and embeds
 function sendMessage(message) {
-  if (message.length <= 0) {
-    notify("Message cannot be empty.", "error");
+  if (message.length <= 0 || message.length > 1900) {
+    notify("Message cannot be empty or too long.", "error");
     return;
   }
-
+  sendRequest({ content: message });
+}
+function sendEmbed(embed) {
+  sendRequest({embeds: [embed]});
+}
+function sendRequest(requestBody) {
   fetch(selectedHook.url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      content: message,
-    }),
+    body: JSON.stringify(requestBody),
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      notify(`Message sent to ${selectedHook.name} successfully.`, "success");
+      notify(`Successfully sent to ${selectedHook.name}`, "success");
       messageBox.value = "";
     })
     .catch((error) => {
@@ -150,6 +188,7 @@ function sendMessage(message) {
     .finally(() => {
       updateState();
     });
+  console.log(JSON.stringify(requestBody));
 }
 
 setting.addEventListener("click", () => {
@@ -170,15 +209,15 @@ changeLayout.addEventListener("click", () => {
 shareCurrentTab.addEventListener("click", async () => {
   const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
   let tab = `${currTab.url}\n`;
-  layoutType == "message" ? messageBox.value += tab : embedURLField.value = tab;
+  layoutType == "message" ? (messageBox.value += tab) : (embedURLField.value = tab);
   updateSendButton();
 });
 
 //share all tabs
 shareAllTab.addEventListener("click", async () => {
   const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
-  const tab = allTabs.map((tab) => tab.url).join("\n")+"\n";
-  layoutType == "message" ? messageBox.value += tab : embedDescriptionField.value += tab;
+  const tab = allTabs.map((tab) => tab.url).join("\n") + "\n";
+  layoutType == "message" ? (messageBox.value += tab) : (embedDescriptionField.value += tab);
   updateSendButton();
 });
 
@@ -207,6 +246,18 @@ sendMessageButton.addEventListener("click", () => {
   sendMessage(messageBox.value);
 });
 
+embedArea.addEventListener("submit", (e) => {
+  e.preventDefault();
+  sendEmbed(createEmbed(
+    embedTitleField.value,
+    embedDescriptionField.value,
+    embedNameField.value,
+    embedFooterField.value,
+    embedURLField.value,
+    embedThumbnailField.value,
+    embedAvatarField.value
+  ));
+});
 function init() {
   updateState();
 }
