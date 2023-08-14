@@ -4,7 +4,7 @@
   "description": "A Chrome extension to send Discord messages directly from Chrome without having to log in or execute Discord",
   "version": "0.0.1",
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "index/index.html"
   },
   "options_page": "options/index.html",
   "background": {
