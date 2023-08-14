@@ -1,3 +1,5 @@
+import { storage, getWebhooksFromStorage, createEmbed } from "../src/utils.js";
+
 //defaults
 let numberOfHook = 0;
 let selectedHook = { index: 0, name: null, url: null };
@@ -17,9 +19,6 @@ const nextHook = document.getElementById("nextHook");
 const messageArea = document.getElementById("messageArea");
 const messageBox = document.getElementById("messageBox");
 const sendMessageButton = document.getElementById("sendMessage");
-
-//chrome storage
-const storage = chrome.storage.sync;
 
 //embed area
 const embedArea = document.getElementById("embedArea");
@@ -47,13 +46,6 @@ function notify(message = "Message sent successfully.", type = "success") {
     notification.style.display = "none";
     notification.className = ""; // Clear classes
   }, 2000);
-}
-
-function getWebhooksFromStorage(callback) {
-  storage.get(["webhook"], ({ webhook }) => {
-    const webhooks = webhook || [];
-    callback(webhooks);
-  });
 }
 
 //to loop over input fields of embed form with required attribute set
@@ -119,40 +111,22 @@ function updateCurrentHook() {
   });
 }
 
+function clearField() {
+  if (layoutType == "message") {
+    messageBox.value = "";
+  } else {
+    embedArea.querySelectorAll('input[type="text"]').forEach((field) => {
+      field.value = "";
+    });
+    embedDescriptionField.value = "";
+  }
+}
+
 //to update whole UI
 function updateState() {
   updateCurrentHook();
   updateLayoutType();
   updateSendButton();
-}
-
-//to create embed object
-function createEmbed(title, description, authorname, footer, url, thumbnailurl, authoravatarurl, color) {
-  const embed = {
-    title: title,
-    description: description,
-    color: color ? color : 0xbf7c00,
-    author: {
-      name: authorname,
-    },
-  };
-  if (footer) {
-    embed.footer = {
-      text: footer,
-    };
-  }
-  if (url) {
-    embed.url = url;
-  }
-  if (thumbnailurl) {
-    embed.thumbnail = {
-      url: thumbnailurl,
-    };
-  }
-  if (authoravatarurl) {
-    embed.author.icon_url = authoravatarurl;
-  }
-  return embed;
 }
 
 //methods for sending messages and embeds
@@ -164,7 +138,7 @@ function sendMessage(message) {
   sendRequest({ content: message });
 }
 function sendEmbed(embed) {
-  sendRequest({embeds: [embed]});
+  sendRequest({ embeds: [embed] });
 }
 function sendRequest(requestBody) {
   fetch(selectedHook.url, {
@@ -179,10 +153,10 @@ function sendRequest(requestBody) {
         throw new Error(response.statusText);
       }
       notify(`Successfully sent to ${selectedHook.name}`, "success");
-      messageBox.value = "";
+      clearField();
     })
     .catch((error) => {
-      notify("An error occurred: " + error.message, "error");
+      notify("An error occurred: " + error.statusText, "error");
       console.error("An error occurred:", error.message);
     })
     .finally(() => {
@@ -191,6 +165,7 @@ function sendRequest(requestBody) {
   console.log(JSON.stringify(requestBody));
 }
 
+//open settings
 setting.addEventListener("click", () => {
   chrome.runtime.openOptionsPage();
 });
@@ -221,18 +196,19 @@ shareAllTab.addEventListener("click", async () => {
   updateSendButton();
 });
 
+//toggling between hooks work
 prevHook.addEventListener("click", () => {
   if (selectedHook.index > 0) {
     updateCurrentHook(--selectedHook.index);
   }
 });
-
 nextHook.addEventListener("click", () => {
   if (selectedHook.index < numberOfHook - 1) {
     updateCurrentHook(++selectedHook.index);
   }
 });
 
+//making input fields responsive
 messageBox.addEventListener("input", updateSendButton);
 messageBox.addEventListener("change", updateSendButton);
 loopOverRequiredFormFields((el) => {
@@ -242,22 +218,15 @@ loopOverRequiredFormFields((el) => {
   el.addEventListener("change", updateSendButton);
 });
 
+//making send buttons work
 sendMessageButton.addEventListener("click", () => {
   sendMessage(messageBox.value);
 });
-
 embedArea.addEventListener("submit", (e) => {
   e.preventDefault();
-  sendEmbed(createEmbed(
-    embedTitleField.value,
-    embedDescriptionField.value,
-    embedNameField.value,
-    embedFooterField.value,
-    embedURLField.value,
-    embedThumbnailField.value,
-    embedAvatarField.value
-  ));
+  sendEmbed(createEmbed(embedTitleField.value, embedDescriptionField.value, embedNameField.value, embedFooterField.value, embedURLField.value, embedThumbnailField.value, embedAvatarField.value));
 });
+
 function init() {
   updateState();
 }
