@@ -1,30 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Options | Dispatch Rider</title>
+    <link rel="stylesheet" href="../styles/defaults.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Options</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="style.css">
-</head>
+  <body>
+    <div class="container">
+      <h1 class="title">Manage Hooks</h1>
+      <div class="mainArea">
+        <div class="group">
+          <input id="webhookNameField" placeholder="Webhook name" type="text" />
+          <input id="webhookUrlField" placeholder="Webhook URL" type="text" />
+          <button class="submitButton" id="addWebhook">
+            Add Hook
+            <object data="../assets/add.svg" type="image/svg+xml"></object>
+          </button>
+        </div>
+      </div>
+      <div id="hooksList" class="mainArea hookListContainer">
+        <!--
+					<div class="flex_noWrap hookContainer">
+          	<span class="name">General | BlueWinds</span>
+          	<span class="url">https://example.com/example/hook/1234567890/abcdefghijklmnopqrstuvwxyz</span>
+          	<span class="delete"><object data="../assets/delete.svg" type="image/svg+xml"></object></span>
+        	</div>
+				-->
 
-<body>
-    <!-- Adding New Webhooks -->
-    <div class="addHook">
-        <input class="field" id="webhookName" placeholder="Webhook name" type="text" />
-        <input class="field" id="webhookUrl" placeholder="Webhook URL" type="text" />
-        <input class="btn" id="addWebhook" type="submit" value="Add Hook" />
+        <!--
+          <details class="hookCard">
+              <summary><span>Title Example</span><button class="btn btn-danger">Delete</button></summary>
+              <p>Example Url </p>
+          </details>
+      --></div>
     </div>
-    <!-- List of hooks -->
-    <div id="hooksList">
-        <!-- 
-        <details class="hookCard">
-            <summary><span>Title Example</span><button class="btn btn-danger">Delete</button></summary>
-            <p>Example Url </p>
-        </details> 
-    -->
-    </div>
-</body>
-
+    <script src="main.js" type="module"></script>
+  </body>
 </html>

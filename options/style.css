@@ -1,4 +1,4 @@
-* {
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -84,4 +84,108 @@ body {
 
 .btn-danger:hover {
   background: #dd0000;
+} */
+* {
+  transition: all 100ms;
+}
+html,
+body {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+.container {
+  width: 40%;
+  height: 80%;
+  align-self: center;
+  /*parent is not flex*/
+  margin: 0 auto;
+}
+.mainArea {
+  height: auto;
+  flex-grow: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.title {
+  align-self: center;
+  font-size: 32px;
+  padding: 5px 5px 30px 5px;
+  font-weight: bolder;
+  color: white;
+}
+.hookListContainer {
+  background: #36393e;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+.hookContainer {
+  width: 100%;
+  max-width: 100%;
+  justify-content: space-evenly;
+  gap: 8px;
+  height: 40px;
+  margin: 5px 0;
+  border-radius: 8px;
+}
+.hookListContainer .hookContainer:nth-child(odd) {
+  background: #282b30;
+}
+.hookListContainer .hookContainer:nth-child(even) {
+  background: #202225;
+}
+.hookListContainer .hookContainer:hover {
+  background: #0b0c0e;
+}
+.hookContainer .name {
+  font-weight: bold;
+  font-size: 20px;
+  width: 300px;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 8px;
+}
+
+.hookContainer .url {
+  font-weight: bold;
+  font-size: 20px;
+  width: 800px;
+  max-width: 800px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex-grow: 2;
+  padding: 8px;
+}
+.hookContainer .delete {
+  width: 100px;
+  max-width: 100px;
+  flex-grow: 2;
+  padding: 4px 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background: #da373c;
+}
+.hookContainer .delete object {
+  height: 25px;
+  width: 25px;
+  align-self: center;
+  user-select: none;
+  pointer-events: none;
+}
+.hookContainer .delete:hover,
+.danger:hover {
+  background: #a12828;
+}
+.hookContainer .delete:active,
+.danger:active {
+  background: #8f2022;
+}
+.danger {
+  background: #da373c;
+  margin: 5px 0;
 }

@@ -1,98 +1,94 @@
+import { storage, getWebhooksFromStorage, createEmbed } from "../src/utils.js";
+
 // global references
-const webhookName = document.getElementById("webhookName");
-const webhookUrl = document.getElementById("webhookUrl");
+const webhookNameField = document.getElementById("webhookNameField");
+const webhookUrlField = document.getElementById("webhookUrlField");
 const addWebhook = document.getElementById("addWebhook");
 const hooksList = document.getElementById("hooksList");
 
-//chrome storage
-const storage = chrome.storage.sync;
+function createHookElement(name, url, index) {
+  let hookContainer = document.createElement("div");
+  hookContainer.className = "flex_noWrap hookContainer";
 
-// Copied functions that need to be in utils.js
-// ### UTILS ###
-function getWebhooksFromStorage(callback) {
-  storage.get(["webhook"], ({ webhook }) => {
-    const webhooks = webhook || [];
-    callback(webhooks);
+  let hookName = document.createElement("span");
+  hookName.innerText = name;
+  hookName.className = "name";
+
+  let hookUrl = document.createElement("span");
+  hookUrl.innerText = url;
+  hookUrl.className = "url";
+
+  let deleteButton = document.createElement("span");
+  deleteButton.className = "delete";
+  deleteButton.setAttribute("data-index", index);
+  deleteButton.addEventListener("click", (e) => {
+    deleteHook(e.target);
   });
+
+  let deleteIcon = document.createElement("object");
+  deleteIcon.type = "image/svg+xml";
+  deleteIcon.data = "../assets/delete.svg";
+
+  deleteButton.append(deleteIcon);
+  hookContainer.append(hookName, hookUrl, deleteButton);
+  hooksList.append(hookContainer);
 }
 
-function updateHooksList() {
-  //clearing the list
+function updateList() {
   hooksList.innerHTML = "";
-
-  getWebhooksFromStorage(webhooks => {
-    if (webhooks.length > 0) {
-      webhooks.forEach(wb => {
-        const hookCard = document.createElement("details");
-        hookCard.className = "hookCard"; // css styles to make it card like item
-
-        // creating card summary (tile and delete button)
-        const summary = document.createElement("summary");
-        const title = document.createElement("span");
-        title.innerText = wb.name;
-
-        // creating delete button
-        const deleteButton = document.createElement("button");
-        deleteButton.innerText = "Delete";
-        deleteButton.classList.add("btn", "btn-danger");
-        deleteButton.addEventListener("click", () => {
-          webhooks.splice(webhooks.indexOf(wb), 1);
-          storage.set({ webhook: webhooks });
-          updateHooksList();
-        });
-
-        // creating edit button
-        const editButton = document.createElement("button");
-        editButton.innerText = "Edit";
-        editButton.classList.add("btn", "btn-primary");
-        editButton.addEventListener("click", () => {});
-
-        // adding to summary
-        summary.appendChild(title);
-        summary.appendChild(deleteButton);
-
-        // creating card content
-        const content = document.createElement("p");
-        content.innerText = `${wb.url}`;
-
-        // adding to hookCard
-        hookCard.appendChild(summary);
-        hookCard.appendChild(content);
-
-        // finally appending to hooksList
-        hooksList.appendChild(hookCard);
+  getWebhooksFromStorage((webhooks) => {
+    webhooks
+      .slice() //NOTE: slice() is used to create a shallow copy because reverse() modifies original array
+      .reverse()
+      .forEach((webhook, index) => {
+        createHookElement(webhook.name, webhook.url, webhooks.length - 1 - index); //because its reversed
       });
-    } else {
-      hooksList.innerText = "No webhook is set.";
-    }
   });
 }
 
-//TODO - define notify function for options page
-
-// ### ATTACHING LISTNERS ###
-addWebhook.addEventListener("click", () => {
-  const trimmedHookName = webhookName.value.trim();
-  const trimmedHookUrl = webhookUrl.value.trim();
-
-  if (trimmedHookName.length === 0 || trimmedHookUrl.length === 0) {
-    //TODO - notify
-    // notify("Webhook name and URL are required.", "warn");
-    return;
+function updateAddButton() {
+  if (webhookNameField.value.trim().length == 0 || webhookUrlField.value.trim().length == 0) {
+    addWebhook.disabled = true;
+  } else {
+    addWebhook.disabled = false;
   }
+}
 
-  getWebhooksFromStorage(webhooks => {
-    //proceeding to add
-    webhooks.push({ name: trimmedHookName, url: trimmedHookUrl });
-    storage.set({ webhook: webhooks });
-    //TODO - notify
-    // notify("Webhook added successfully.", "success");
+function updateState() {
+  updateList();
+  updateAddButton();
+}
 
-    // clearing input fields
-    webhookName.value = webhookUrl.value = "";
-    updateHooksList();
+function createNewHook(hookName, hookUrl) {
+  if (hookName.trim().length == 0 || hookUrl.trim().length == 0) {
+    updateAddButton();
+  }
+  getWebhooksFromStorage((hooks) => {
+    const newHook = { name: hookName, url: hookUrl };
+    hooks.push(newHook);
+    storage.set({ webhook: hooks });
+    webhookNameField.value = webhookUrlField.value = "";
+    updateState();
   });
+}
+
+//the delete button itself is parameter
+function deleteHook(element) {
+  let index = element.getAttribute("data-index");
+  if (!index) return;
+  getWebhooksFromStorage((webhooks) => {
+    webhooks.splice(index, 1);
+    storage.set({ webhook: webhooks });
+    updateList();
+  });
+}
+
+webhookNameField.addEventListener("input", updateAddButton);
+webhookUrlField.addEventListener("input", updateAddButton);
+webhookNameField.addEventListener("change", updateAddButton);
+webhookUrlField.addEventListener("change", updateAddButton);
+addWebhook.addEventListener("click", () => {
+  createNewHook(webhookNameField.value, webhookUrlField.value);
 });
 
-// ### INIT ###
-updateHooksList();
+updateState();

@@ -98,6 +98,7 @@ textarea {
   justify-content: center;
   align-items: center;
   gap: 4px;
+  padding: 12px;
   min-height: 15px;
   max-height: 50px;
 }
@@ -148,10 +149,11 @@ button:active {
 button:disabled {
   background: #36393e;
 }
-.submitButton:hover {
+.submitButton:hover,
+.submitButton:focus {
   background: #4b5beb;
 }
-.submitButton:active, .submitButton:focus {
+.submitButton:active {
   background: #3242cf;
 }
 .submitButton:disabled {
