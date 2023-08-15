@@ -1,6 +1,6 @@
 # Dispatch Rider
 
-<center><img alt="Dispatch Rider Logo" src="assets/logo/512x512.jpg" style="max-height:400px;max-width:400px;padding:15px;border-radius:40px;"></center>
+<p align="center"><img height="400px" width="400px" alt="Dispatch Rider Logo" src="assets/logo/logo_main.png"></p>
 
 **Send Discord Messages Directly from Chrome**
 
@@ -23,15 +23,14 @@ Dispatch Rider is a powerful Chrome extension designed to streamline communicati
 ## Screenshots
 
 - Sending a message
-<img alt="Example One" src="assets/screenshots/screeenshot_main.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+  <img height="350px" alt="Example One" src="assets/screenshots/screeenshot_main.jpg">
 - Sending an embed
-<img alt="Example Two" src="assets/screenshots/screenshot_secondary.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+  <img height="350px" alt="Example Two" src="assets/screenshots/screenshot_secondary.jpg">
 - Managing webhooks
-<img alt="Example One" src="assets/screenshots/screenshot_options.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+  <img height="150px" alt="Example One" src="assets/screenshots/screenshot_options.jpg">
 - Example request and response
-<img alt="Example One" src="assets/screenshots/embed_send_text_example.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
-<img alt="Example One" src="assets/screenshots/embed_example.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
-
+  <img height="350px" alt="Example One" src="assets/screenshots/embed_send_text_example.jpg">
+  <img height="200px" alt="Example One" src="assets/screenshots/embed_example.jpg">
 
 ## Usage
 
