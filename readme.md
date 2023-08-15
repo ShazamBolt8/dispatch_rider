@@ -1,6 +1,6 @@
 # Dispatch Rider
 
-<center><img alt="Dispatch Rider Logo" src="assets/logo/logo_main.png" style="max-height:400px;max-width:400px;padding:15px;border-radius:40px;"></center>
+<center><img alt="Dispatch Rider Logo" src="assets/logo/512x512.jpg" style="max-height:400px;max-width:400px;padding:15px;border-radius:40px;"></center>
 
 **Send Discord Messages Directly from Chrome**
 
