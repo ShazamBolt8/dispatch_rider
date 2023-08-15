@@ -22,15 +22,17 @@ Dispatch Rider is a powerful Chrome extension designed to streamline communicati
 
 ## Screenshots
 
-- Sending a message
-  <img width="450px" alt="Example One" src="assets/screenshots/screeenshot_main.jpg">
-- Sending an embed
-  <img width="450px" alt="Example Two" src="assets/screenshots/screenshot_secondary.jpg">
-- Managing webhooks
-  <img width="450px" alt="Example One" src="assets/screenshots/screenshot_options.jpg">
-- Example request and response
-  <img width="450px" alt="Example One" src="assets/screenshots/embed_send_text_example.jpg">
+- Sending a message<br>
+   <p align="center"><img width="450px" alt="Example One" src="assets/screenshots/screeenshot_main.jpg"></p>
+
+- Sending an embed<br>
+  <p align="center"><img width="450px" alt="Example Two" src="assets/screenshots/screenshot_secondary.jpg"></p>
+- Managing webhooks<br>
+  <p align="center"><img width="450px" alt="Example One" src="assets/screenshots/screenshot_options.jpg"></p>
+- Example request and response<br>
+  <p align="center"><img width="450px" alt="Example One" src="assets/screenshots/embed_send_text_example.jpg"><br>
   <img width="400px" alt="Example One" src="assets/screenshots/embed_example.jpg">
+  </p>
 
 ## Usage
 
