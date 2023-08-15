@@ -10,7 +10,7 @@
 #prevHook {
   width: 40%;
 }
-#prevHook object{
+#prevHook object {
   transform: rotate(180deg);
 }
 #currentHook {
@@ -23,7 +23,19 @@
 #embedArea {
   gap: 8px;
 }
-
+footer {
+  display: flex;
+  justify-content: center;
+  padding: 0px 0px 6px 0px;
+}
+a {
+  color: #7f8388;
+  font-size: 12px;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
 .success {
   background: #06a151;
 }
