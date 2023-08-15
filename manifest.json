@@ -10,5 +10,13 @@
   "background": {
     "service_worker": "src/service_worker.js"
   },
-  "permissions": ["storage", "tabs"]
+  "permissions": ["storage", "tabs"],
+  "icons": {
+    "16": "assets/logo/16x16.jpg",
+    "48": "assets/logo/48x48.jpg",
+    "128": "assets/logo/128x128.jpg",
+    "192": "assets/logo/192x192.jpg",
+    "512": "assets/logo/512x512.jpg",
+    "1080": "assets/logo/logo_main.png"
+  }
 }

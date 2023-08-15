@@ -1,5 +1,7 @@
 # Dispatch Rider
 
+<center><img alt="Dispatch Rider Logo" src="assets/logo/logo_main.png" style="max-height:400px;max-width:400px;padding:15px;border-radius:40px;"></center>
+
 **Send Discord Messages Directly from Chrome**
 
 Dispatch Rider is a powerful Chrome extension designed to streamline communication by enabling users to send messages to Discord channels directly from their browser, eliminating the need to log in or open the Discord app.
@@ -17,6 +19,19 @@ Dispatch Rider is a powerful Chrome extension designed to streamline communicati
 3. Enable the "Developer mode" option.
 4. Click on "Load unpacked" and select the downloaded extension folder.
 5. Look for the Dispatch Rider icon, now comfortably resting in your Chrome toolbar.
+
+## Screenshots
+
+- Sending a message
+<img alt="Example One" src="assets/screenshots/screeenshot_main.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+- Sending an embed
+<img alt="Example Two" src="assets/screenshots/screenshot_secondary.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+- Managing webhooks
+<img alt="Example One" src="assets/screenshots/screenshot_options.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+- Example request and response
+<img alt="Example One" src="assets/screenshots/embed_send_text_example.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+<img alt="Example One" src="assets/screenshots/embed_example.jpg" style="max-height:350px;max-width:350px;padding:15px;border-radius:30px;">
+
 
 ## Usage
 
@@ -40,6 +55,6 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 
 - **Author**: [ShazamBolt8](https://github.com/ShazamBolt8)
 - **Contributor**: [Bisskut](https://github.com/0adiy)
-- **Contributor**: [Koruko](https://github.com/leeh-nix)
+- **Contributor**: [Kuroko](https://github.com/leeh-nix)
 
 Your collective efforts have enriched this project with innovation and dedication.
