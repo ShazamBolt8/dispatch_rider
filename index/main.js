@@ -59,13 +59,13 @@ function loopOverRequiredFormFields(callback) {
 
 //to update accessibility of send button based on certain factors
 function updateSendButton() {
-  getWebhooksFromStorage((webhooks) => {
+  getWebhooksFromStorage(webhooks => {
     //for message
     const messageNotEmpty = messageBox.value.trim().length > 0;
     sendMessageButton.disabled = !(webhooks.length > 0 && messageNotEmpty);
     //for embed
     let isFieldEmpty = false;
-    loopOverRequiredFormFields((el) => {
+    loopOverRequiredFormFields(el => {
       if (el.value.trim().length == 0) {
         isFieldEmpty = true;
         return;
@@ -94,7 +94,7 @@ function updateLayoutType() {
 
 //to update toggle menu
 function updateCurrentHook() {
-  getWebhooksFromStorage((webhooks) => {
+  getWebhooksFromStorage(webhooks => {
     if (webhooks.length > 0) {
       let index = selectedHook.index; //currently selected hook's index
       selectedHook.name = webhooks[index].name;
@@ -115,7 +115,7 @@ function clearField() {
   if (layoutType == "message") {
     messageBox.value = "";
   } else {
-    embedArea.querySelectorAll('input[type="text"]').forEach((field) => {
+    embedArea.querySelectorAll('input[type="text"]').forEach(field => {
       field.value = "";
     });
     embedDescriptionField.value = "";
@@ -148,14 +148,14 @@ function sendRequest(requestBody) {
     },
     body: JSON.stringify(requestBody),
   })
-    .then((response) => {
+    .then(response => {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
       notify(`Successfully sent to ${selectedHook.name}`, "success");
       clearField();
     })
-    .catch((error) => {
+    .catch(error => {
       notify("An error occurred: " + error.statusText, "error");
       console.error("An error occurred:", error.message);
     })
@@ -184,15 +184,19 @@ changeLayout.addEventListener("click", () => {
 shareCurrentTab.addEventListener("click", async () => {
   const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
   let tab = `${currTab.url}\n`;
-  layoutType == "message" ? (messageBox.value += tab) : (embedURLField.value = tab);
+  layoutType == "message"
+    ? (messageBox.value += tab)
+    : (embedURLField.value = tab);
   updateSendButton();
 });
 
 //share all tabs
 shareAllTab.addEventListener("click", async () => {
   const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
-  const tab = allTabs.map((tab) => tab.url).join("\n") + "\n";
-  layoutType == "message" ? (messageBox.value += tab) : (embedDescriptionField.value += tab);
+  const tab = allTabs.map(tab => tab.url).join("\n") + "\n";
+  layoutType == "message"
+    ? (messageBox.value += tab)
+    : (embedDescriptionField.value += tab);
   updateSendButton();
 });
 
@@ -209,12 +213,19 @@ nextHook.addEventListener("click", () => {
 });
 
 //making input fields responsive
-messageBox.addEventListener("input", updateSendButton);
-messageBox.addEventListener("change", updateSendButton);
-loopOverRequiredFormFields((el) => {
+messageBox.addEventListener("input", () => {
+  storage.set({ messageBox: messageBox.value });
+  updateSendButton();
+});
+messageBox.addEventListener("change", () => {
+  storage.set({ messageBox: messageBox.value });
+  updateSendButton();
+});
+
+loopOverRequiredFormFields(el => {
   el.addEventListener("input", updateSendButton);
 });
-loopOverRequiredFormFields((el) => {
+loopOverRequiredFormFields(el => {
   el.addEventListener("change", updateSendButton);
 });
 
@@ -222,12 +233,55 @@ loopOverRequiredFormFields((el) => {
 sendMessageButton.addEventListener("click", () => {
   sendMessage(messageBox.value);
 });
-embedArea.addEventListener("submit", (e) => {
+embedArea.addEventListener("submit", e => {
   e.preventDefault();
-  sendEmbed(createEmbed(embedTitleField.value, embedDescriptionField.value, embedNameField.value, embedFooterField.value, embedURLField.value, embedThumbnailField.value, embedAvatarField.value));
+  sendEmbed(
+    createEmbed(
+      embedTitleField.value,
+      embedDescriptionField.value,
+      embedNameField.value,
+      embedFooterField.value,
+      embedURLField.value,
+      embedThumbnailField.value,
+      embedAvatarField.value
+    )
+  );
+});
+
+embedArea.addEventListener("change", e => {
+  // storing
+  storage.set({
+    embed: {
+      embedTitleField: embedTitleField.value,
+      embedDescriptionField: embedDescriptionField.value,
+      embedNameField: embedNameField.value,
+      embedFooterField: embedFooterField.value,
+      embedURLField: embedURLField.value,
+      embedThumbnailField: embedThumbnailField.value,
+      embedAvatarField: embedAvatarField.value,
+    },
+  });
 });
 
 function init() {
+  // loading messageBox from storage
+  storage.get(["messageBox"], ({ messageBox: m }) => {
+    messageBox.value = `${m}`;
+  });
+  // loading embed from storage
+  storage.get(["embed"], ({ embed }) => {
+    if (embed) {
+      embedTitleField.value = embed.embedTitleField;
+      embedDescriptionField.value = embed.embedDescriptionField;
+      embedNameField.value = embed.embedNameField;
+      embedFooterField.value = embed.embedFooterField;
+      embedURLField.value = embed.embedURLField;
+      embedThumbnailField.value = embed.embedThumbnailField;
+      embedAvatarField.value = embed.embedAvatarField;
+    }
+  });
+
+  // updating the state
   updateState();
 }
 
