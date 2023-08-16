@@ -1,4 +1,4 @@
-import { storage, getWebhooksFromStorage, createEmbed } from "../src/utils.js";
+import { storage, getWebhooksFromStorage, createEmbed, saveText, loadText } from "../src/utils.js";
 
 //defaults
 let numberOfHook = 0;
@@ -23,13 +23,10 @@ const sendMessageButton = document.getElementById("sendMessage");
 //embed area
 const embedArea = document.getElementById("embedArea");
 const sendEmbedButton = document.getElementById("sendEmbed");
-const embedNameField = document.getElementById("embedNameField");
-const embedAvatarField = document.getElementById("embedAvatarField");
-const embedTitleField = document.getElementById("embedTitleField");
-const embedDescriptionField = document.getElementById("embedDescriptionField");
-const embedURLField = document.getElementById("embedURLField");
-const embedThumbnailField = document.getElementById("embedThumbnailField");
-const embedFooterField = document.getElementById("embedFooterField");
+//spread operator is used to convert NodeList to Array
+const embedField = [...embedArea.querySelectorAll("input[type='text'], textarea")];
+const embedDescriptionField = embedField[3];
+const embedURLField = embedField[4];
 
 //for changing layout
 const changeLayout = document.getElementById("changeLayout");
@@ -59,13 +56,13 @@ function loopOverRequiredFormFields(callback) {
 
 //to update accessibility of send button based on certain factors
 function updateSendButton() {
-  getWebhooksFromStorage(webhooks => {
+  getWebhooksFromStorage((webhooks) => {
     //for message
     const messageNotEmpty = messageBox.value.trim().length > 0;
     sendMessageButton.disabled = !(webhooks.length > 0 && messageNotEmpty);
     //for embed
     let isFieldEmpty = false;
-    loopOverRequiredFormFields(el => {
+    loopOverRequiredFormFields((el) => {
       if (el.value.trim().length == 0) {
         isFieldEmpty = true;
         return;
@@ -94,7 +91,7 @@ function updateLayoutType() {
 
 //to update toggle menu
 function updateCurrentHook() {
-  getWebhooksFromStorage(webhooks => {
+  getWebhooksFromStorage((webhooks) => {
     if (webhooks.length > 0) {
       let index = selectedHook.index; //currently selected hook's index
       selectedHook.name = webhooks[index].name;
@@ -115,10 +112,32 @@ function clearField() {
   if (layoutType == "message") {
     messageBox.value = "";
   } else {
-    embedArea.querySelectorAll('input[type="text"]').forEach(field => {
+    embedField.forEach((field) => {
       field.value = "";
     });
-    embedDescriptionField.value = "";
+  }
+}
+
+function saveFieldData() {
+  if (layoutType == "message") {
+    saveText("message", messageBox.value.trim());
+  } else {
+    //this is actually pretty expensive, prefer individual field writing
+    embedField.forEach((field) => saveText(field.name, field.value));
+  }
+}
+
+function loadFieldData() {
+  if (layoutType == "message") {
+    loadText("message", (message) => {
+      messageBox.value = message === undefined ? "" : message;
+    });
+  } else {
+    embedField.forEach((field) => {
+      loadText(field.name, (fieldData) => {
+        field.value = fieldData === undefined ? "" : fieldData;
+      });
+    });
   }
 }
 
@@ -126,6 +145,16 @@ function clearField() {
 function updateState() {
   updateCurrentHook();
   updateLayoutType();
+  updateSendButton();
+}
+
+let THROTTLE; //To prevent: MAX_WRITE_OPERATIONS_PER_MINUTE error caused by frequent writing
+function manageTextAndButton() {
+  clearTimeout(THROTTLE);
+  THROTTLE = setTimeout(() => {
+    saveFieldData();
+    THROTTLE = null;
+  }, 1000); //throttling or else fatal error
   updateSendButton();
 }
 
@@ -148,21 +177,21 @@ function sendRequest(requestBody) {
     },
     body: JSON.stringify(requestBody),
   })
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
       notify(`Successfully sent to ${selectedHook.name}`, "success");
       clearField();
+      saveFieldData();
     })
-    .catch(error => {
-      notify("An error occurred: " + error.statusText, "error");
+    .catch((error) => {
+      notify("An error occurred: " + error, "error");
       console.error("An error occurred:", error.message);
     })
     .finally(() => {
       updateState();
     });
-  console.log(JSON.stringify(requestBody));
 }
 
 //open settings
@@ -178,26 +207,24 @@ changeLayout.addEventListener("click", () => {
     layoutType = "message";
   }
   updateLayoutType();
+  loadFieldData();
+  updateSendButton();
 });
 
 //share only current tab
 shareCurrentTab.addEventListener("click", async () => {
   const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
   let tab = `${currTab.url}\n`;
-  layoutType == "message"
-    ? (messageBox.value += tab)
-    : (embedURLField.value = tab);
-  updateSendButton();
+  layoutType == "message" ? (messageBox.value += tab) : (embedURLField.value = tab);
+  manageTextAndButton();
 });
 
 //share all tabs
 shareAllTab.addEventListener("click", async () => {
   const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
-  const tab = allTabs.map(tab => tab.url).join("\n") + "\n";
-  layoutType == "message"
-    ? (messageBox.value += tab)
-    : (embedDescriptionField.value += tab);
-  updateSendButton();
+  const tab = allTabs.map((tab) => tab.url).join("\n") + "\n";
+  layoutType == "message" ? (messageBox.value += tab) : (embedDescriptionField.value += tab);
+  manageTextAndButton();
 });
 
 //toggling between hooks work
@@ -213,75 +240,36 @@ nextHook.addEventListener("click", () => {
 });
 
 //making input fields responsive
-messageBox.addEventListener("input", () => {
-  storage.set({ messageBox: messageBox.value });
-  updateSendButton();
-});
-messageBox.addEventListener("change", () => {
-  storage.set({ messageBox: messageBox.value });
-  updateSendButton();
-});
+//on change event, only the button is updated to avoid spam-writing cache
+messageBox.addEventListener("input", manageTextAndButton);
+messageBox.addEventListener("change", updateSendButton);
 
-loopOverRequiredFormFields(el => {
-  el.addEventListener("input", updateSendButton);
-});
-loopOverRequiredFormFields(el => {
-  el.addEventListener("change", updateSendButton);
+//enabling throttling again but for indivudal fields this time
+let debounceTimeouts = {};
+embedField.forEach((field) => {
+  field.addEventListener("input", () => {
+    updateSendButton();
+    clearTimeout(debounceTimeouts[field.name]);
+    debounceTimeouts[field.name] = setTimeout(() => {
+      saveText(field.name, field.value);
+    }, 800);
+  });
 });
 
 //making send buttons work
 sendMessageButton.addEventListener("click", () => {
   sendMessage(messageBox.value);
 });
-embedArea.addEventListener("submit", e => {
-  e.preventDefault();
-  sendEmbed(
-    createEmbed(
-      embedTitleField.value,
-      embedDescriptionField.value,
-      embedNameField.value,
-      embedFooterField.value,
-      embedURLField.value,
-      embedThumbnailField.value,
-      embedAvatarField.value
-    )
-  );
-});
-
-embedArea.addEventListener("change", e => {
-  // storing
-  storage.set({
-    embed: {
-      embedTitleField: embedTitleField.value,
-      embedDescriptionField: embedDescriptionField.value,
-      embedNameField: embedNameField.value,
-      embedFooterField: embedFooterField.value,
-      embedURLField: embedURLField.value,
-      embedThumbnailField: embedThumbnailField.value,
-      embedAvatarField: embedAvatarField.value,
-    },
-  });
+embedArea.addEventListener("submit", (event) => {
+  event.preventDefault();
+  manageTextAndButton();
+  let embed = {};
+  embedField.forEach((el) => (embed[el.name] = el.value));
+  sendEmbed(createEmbed(embed));
 });
 
 function init() {
-  // loading messageBox from storage
-  storage.get(["messageBox"], ({ messageBox: m }) => {
-    messageBox.value = `${m}`;
-  });
-  // loading embed from storage
-  storage.get(["embed"], ({ embed }) => {
-    if (embed) {
-      embedTitleField.value = embed.embedTitleField;
-      embedDescriptionField.value = embed.embedDescriptionField;
-      embedNameField.value = embed.embedNameField;
-      embedFooterField.value = embed.embedFooterField;
-      embedURLField.value = embed.embedURLField;
-      embedThumbnailField.value = embed.embedThumbnailField;
-      embedAvatarField.value = embed.embedAvatarField;
-    }
-  });
-
-  // updating the state
+  loadFieldData();
   updateState();
 }
 

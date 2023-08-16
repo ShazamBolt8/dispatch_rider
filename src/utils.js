@@ -1,5 +1,6 @@
 //chrome storage
 const storage = chrome.storage.sync;
+const cache = chrome.storage.local;
 
 //getting all hooks
 function getWebhooksFromStorage(callback) {
@@ -10,32 +11,45 @@ function getWebhooksFromStorage(callback) {
 }
 
 //creating an embed
-function createEmbed(title, description, authorname, footer, url, thumbnailurl, authoravatarurl, color) {
+function createEmbed(data) {
+  const { title, description, author_name, footer, url, thumbnail, author_icon_url, color } = data;
   const embed = {
-    title: title,
-    description: description,
-    color: color ? color : 0xbf7c00,
-    author: {
-      name: authorname,
-    },
+    title: title || "No Title",
+    description: description || "No Description",
+    color: color || 0xbf7c00,
+    footer: footer
+      ? {
+          text: footer,
+        }
+      : undefined,
+    url: url || undefined,
+    thumbnail: thumbnail
+      ? {
+          url: thumbnail,
+        }
+      : undefined,
   };
-  if (footer) {
-    embed.footer = {
-      text: footer,
+
+  if (author_name) {
+    embed.author = {
+      name: author_name,
+      icon_url: author_icon_url || undefined,
     };
-  }
-  if (url) {
-    embed.url = url;
-  }
-  if (thumbnailurl) {
-    embed.thumbnail = {
-      url: thumbnailurl,
-    };
-  }
-  if (authoravatarurl) {
-    embed.author.icon_url = authoravatarurl;
   }
   return embed;
 }
 
-export { storage, getWebhooksFromStorage, createEmbed};
+function saveText(key, value) {
+  const data = {}; //this allows strings to be passed as keys
+  data[key] = value;
+  cache.set(data);
+}
+
+function loadText(key, callback) {
+  cache.get([key], (result) => {
+    const value = result[key];
+    callback(value);
+  });
+}
+
+export { storage, getWebhooksFromStorage, createEmbed, saveText, loadText, cache };

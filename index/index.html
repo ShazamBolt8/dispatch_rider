@@ -50,14 +50,14 @@
       </div>
       <form id="embedArea" class="mainArea">
         <div class="group">
-          <input id="embedNameField" type="text" placeholder="Your name" required />
-          <input id="embedAvatarField" type="text" placeholder="Your avatar URL (optional)" />
+          <input name="author_name" type="text" placeholder="Your name" required />
+          <input name="author_icon_url" type="text" placeholder="Your avatar URL (optional)" />
         </div>
-        <input id="embedTitleField" type="text" placeholder="Title" required />
-        <textarea id="embedDescriptionField" placeholder="Description" required></textarea>
-        <input id="embedURLField" type="text" placeholder="URL (optional)" />
-        <input id="embedThumbnailField" type="text" placeholder="Thumbnail URL (optional)" />
-        <input id="embedFooterField" type="text" placeholder="Footer (optional)" />
+        <input name="title" type="text" placeholder="Title" required />
+        <textarea name="description" placeholder="Description" required></textarea>
+        <input name="url" type="text" placeholder="URL (optional)" />
+        <input name="thumbnail" type="text" placeholder="Thumbnail URL (optional)" />
+        <input name="footer" type="text" placeholder="Footer (optional)" />
         <button type="submit" class="submitButton" id="sendEmbed">
           Send Embed
           <object data="/assets/send.svg" type="image/svg+xml"></object>
