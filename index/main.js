@@ -264,7 +264,7 @@ sendMessageButton.addEventListener("click", () => {
 
 //adding a shortcut
 messageBox.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && !event.shiftKey) {
+  if (event.key === "Enter" && !event.shiftKey && sendMessageButton.disabled == false) {
     sendMessage(messageBox.value.trim());
   }
 });
