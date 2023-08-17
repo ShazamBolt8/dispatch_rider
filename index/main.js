@@ -1,129 +1,102 @@
-import { storage, getWebhooksFromStorage, createEmbed, saveText, loadText } from "../src/utils.js";
+import { getWebhooksFromStorage, saveText, loadText, createEmbed } from "../src/utils.js";
 
-//defaults
+//the default configurations
+let layoutType = "message";
 let numberOfHook = 0;
-let selectedHook = { index: 0, name: null, url: null };
-let layoutType = "message"; //message || embed
+let selectedHook = { index: 0, name: "", url: "" };
 
-//extra options
-const setting = document.getElementById("setting");
-const shareCurrentTab = document.getElementById("shareCurrentTab");
-const shareAllTab = document.getElementById("shareAllTab");
-
-//for navigation between webhooks
-const prevHook = document.getElementById("prevHook");
-const currentHook = document.getElementById("currentHook");
-const nextHook = document.getElementById("nextHook");
-
-//main messaging area
 const messageArea = document.getElementById("messageArea");
+const sendMessageButton = document.getElementById("sendMessageButton");
 const messageBox = document.getElementById("messageBox");
-const sendMessageButton = document.getElementById("sendMessage");
 
-//embed area
 const embedArea = document.getElementById("embedArea");
-const sendEmbedButton = document.getElementById("sendEmbed");
-//spread operator is used to convert NodeList to Array
-const embedField = [...embedArea.querySelectorAll("input[type='text'], textarea")];
-const embedDescriptionField = embedField[3];
-const embedURLField = embedField[4];
+const sendEmbedButton = document.getElementById("sendEmbedButton");
+const requiredEmbedFields = [...embedArea.querySelectorAll("[required]")];
+const allEmbedFields = [...embedArea.querySelectorAll("input[type='text'], textarea")];
 
-//for changing layout
-const changeLayout = document.getElementById("changeLayout");
-const changeLayoutIcon = document.getElementById("changeLayoutIcon");
-const changeLayoutText = document.getElementById("changeLayoutText");
+const changeLayoutButton = document.getElementById("changeLayoutButton");
+
+const currentHookElement = document.getElementById("currentHook");
+const prevHookButton = document.getElementById("prevHook");
+const nextHookButton = document.getElementById("nextHook");
+
+/**********************************************
+ *                                            *
+ *  This section contains functions for       *
+ *  updating UI, hooks, buttons, state, and   *
+ *  some other helper functions.              *
+ *                                            *
+ **********************************************/
 
 // types: success, warn, error
 function notify(message = "Message sent successfully.", type = "success") {
   const notification = document.getElementById("notification");
   notification.innerText = message;
-  notification.className = type; // Use className for cleaner class assignment
+  notification.className = type;
   notification.style.display = "block";
   setTimeout(() => {
     notification.style.display = "none";
-    notification.className = ""; // Clear classes
+    notification.className = "";
   }, 2000);
 }
 
-//to loop over input fields of embed form with required attribute set
-function loopOverRequiredFormFields(callback) {
-  const requiredFields = embedArea.querySelectorAll("[required]");
-  for (let i = 0; i < requiredFields.length; i++) {
-    const field = requiredFields[i];
-    callback(field);
-  }
-}
-
-//to update accessibility of send button based on certain factors
-function updateSendButton() {
-  getWebhooksFromStorage((webhooks) => {
-    //for message
-    const messageNotEmpty = messageBox.value.trim().length > 0;
-    sendMessageButton.disabled = !(webhooks.length > 0 && messageNotEmpty);
-    //for embed
-    let isFieldEmpty = false;
-    loopOverRequiredFormFields((el) => {
-      if (el.value.trim().length == 0) {
-        isFieldEmpty = true;
-        return;
-      }
-    });
-    sendEmbedButton.disabled = !(webhooks.length > 0 && !isFieldEmpty);
-  });
-}
-
-//to hide or show message or embed area
-function updateLayoutType() {
+//update layout from one type to the other
+function updateLayout() {
+  const changeLayoutText = document.getElementById("changeLayoutText");
+  const changeLayoutIcon = document.getElementById("changeLayoutIcon");
   if (layoutType == "message") {
     messageArea.style.display = "flex";
     embedArea.style.display = "none";
+    document.body.style.height = "500px";
     changeLayoutText.innerText = "Send Embed";
     changeLayoutIcon.setAttribute("data", "/assets/send_embed.svg");
-    document.body.style.height = "500px";
-  } else if (layoutType == "embed") {
+    return;
+  }
+  if (layoutType == "embed") {
     embedArea.style.display = "flex";
     messageArea.style.display = "none";
+    document.body.style.height = "600px";
     changeLayoutText.innerText = "Send Message";
     changeLayoutIcon.setAttribute("data", "/assets/send_message.svg");
-    document.body.style.height = "600px";
+    return;
   }
 }
 
-//to update toggle menu
-function updateCurrentHook() {
+//(enable || disable) send buttons based on some factors
+function updateSendButton() {
+  const isMessageBoxEmpty = messageBox.value.trim().length === 0;
+  const isAnyEmbedRequiredFieldEmpty = requiredEmbedFields.some((field) => field.value.trim().length === 0);
+  sendMessageButton.disabled = numberOfHook === 0 || isMessageBoxEmpty;
+  sendEmbedButton.disabled = numberOfHook === 0 || isAnyEmbedRequiredFieldEmpty;
+}
+
+//update stuff related to hook
+function updateHookData() {
   getWebhooksFromStorage((webhooks) => {
-    if (webhooks.length > 0) {
-      let index = selectedHook.index; //currently selected hook's index
+    numberOfHook = webhooks.length;
+    let index = selectedHook.index;
+    if (!numberOfHook > 0) {
+      currentHookElement.innerText = "No webhook found.";
+    } else {
       selectedHook.name = webhooks[index].name;
       selectedHook.url = webhooks[index].url;
-      currentHook.innerText = selectedHook.name;
-      numberOfHook = webhooks.length;
-      prevHook.disabled = index === 0;
-      nextHook.disabled = index === numberOfHook - 1;
-    } else {
-      currentHook.innerText = "No webhook is set.";
-      prevHook.disabled = true;
-      nextHook.disabled = true;
+      currentHookElement.innerText = selectedHook.name;
     }
+    prevHookButton.disabled = index === 0;
+    nextHookButton.disabled = index === numberOfHook - 1;
   });
 }
 
 function clearField() {
   if (layoutType == "message") {
     messageBox.value = "";
-  } else {
-    embedField.forEach((field) => {
-      field.value = "";
-    });
+    saveText("message", messageBox.value);
   }
-}
-
-function saveFieldData() {
-  if (layoutType == "message") {
-    saveText("message", messageBox.value.trim());
-  } else {
-    //this is actually pretty expensive, prefer individual field writing
-    embedField.forEach((field) => saveText(field.name, field.value));
+  if (layoutType == "embed") {
+    allEmbedFields.forEach((field) => {
+      field.value = "";
+      saveText(field.name, field.value);
+    });
   }
 }
 
@@ -131,45 +104,135 @@ function loadFieldData() {
   if (layoutType == "message") {
     loadText("message", (message) => {
       messageBox.value = message === undefined ? "" : message;
+      updateSendButton();
     });
-  } else {
-    embedField.forEach((field) => {
-      loadText(field.name, (fieldData) => {
-        field.value = fieldData === undefined ? "" : fieldData;
+  }
+  if (layoutType == "embed") {
+    allEmbedFields.forEach((field) => {
+      loadText(field.name, (data) => {
+        field.value = data === undefined ? "" : data;
+        updateSendButton();
       });
     });
   }
 }
 
-//to update whole UI
+//updating availability of send buttons, current hook name, and layout type
 function updateState() {
-  updateCurrentHook();
-  updateLayoutType();
+  loadFieldData();
+  updateHookData();
+  updateLayout();
   updateSendButton();
 }
 
-let THROTTLE; //To prevent: MAX_WRITE_OPERATIONS_PER_MINUTE error caused by frequent writing
-function manageTextAndButton() {
-  clearTimeout(THROTTLE);
-  THROTTLE = setTimeout(() => {
-    saveFieldData();
-    THROTTLE = null;
-  }, 1000); //throttling or else fatal error
-  updateSendButton();
-}
+/**********************************************
+ *                                            *
+ *  This section enables UI elements to work  *
+ *  by attaching event listeners, such as     *
+ *  switching hooks, layouts, and sharing     *
+ *  tabs, etc.                                *
+ *                                            *
+ **********************************************/
 
-//methods for sending messages and embeds
+//switch between layouts
+changeLayoutButton.addEventListener("click", () => {
+  layoutType = layoutType == "message" ? "embed" : "message";
+  loadFieldData();
+  updateSendButton();
+  updateLayout();
+});
+
+//switch between hooks
+prevHookButton.addEventListener("click", () => {
+  updateHookData(--selectedHook.index);
+});
+nextHookButton.addEventListener("click", () => {
+  updateHookData(++selectedHook.index);
+});
+
+//share browser tabs
+const shareCurrentTabButton = document.getElementById("shareCurrentTabButton");
+const shareAllTabButton = document.getElementById("shareAllTabButton");
+shareCurrentTabButton.addEventListener("click", async () => {
+  const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
+  const tabUrl = currTab.url;
+
+  allEmbedFields[4].value = tabUrl;
+
+  if (layoutType === "message") {
+    messageBox.value += tabUrl + "\n";
+    saveText("message", messageBox.value);
+  } else if (layoutType === "embed") {
+    allEmbedFields[4].value = tabUrl;
+    saveText(allEmbedFields[4].name, allEmbedFields[4].value);
+  }
+
+  updateSendButton();
+});
+shareAllTabButton.addEventListener("click", async () => {
+  const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
+  const tab = allTabs.map((tab) => tab.url).join("\n") + "\n";
+
+  if (layoutType === "message") {
+    messageBox.value += tab + "\n";
+    saveText("message", messageBox.value);
+  } else if (layoutType === "embed") {
+    allEmbedFields[3].value += tab;
+    saveText(allEmbedFields[3].name, allEmbedFields[3].value);
+  }
+});
+
+//open settings
+const settingButton = document.getElementById("settingButton");
+settingButton.addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
+});
+
+//clear button
+const clearFieldButton = [...document.getElementsByClassName("clearFieldButton")];
+clearFieldButton.forEach((btn) => btn.addEventListener("click", clearField));
+
+/**********************************************
+ *                                             *
+ *  This section makes input fields responsive *
+ *  like updating send button state,           *
+ *  saving data when typing, or making embeds. *
+ *                                             *
+ **********************************************/
+
+//updating send button while typing
+messageBox.addEventListener("input", () => {
+  saveText("message", messageBox.value.trim());
+  updateSendButton();
+});
+allEmbedFields.forEach((field) => {
+  field.addEventListener("input", () => {
+    saveText(field.name, field.value.trim());
+    updateSendButton();
+  });
+});
+
+/**********************************************
+ *                                             *
+ *  This section contains methods for sending  *
+ *  messages and embeds into specific Discord  *
+ *  channels, as well as handling errors       *
+ *  during the sending process.                *
+ *                                             *
+ **********************************************/
+
+function sendEmbed(embed) {
+  embed = createEmbed(embed);
+  sendRequest({ embeds: [embed] });
+}
 function sendMessage(message) {
-  if (message.length <= 0 || message.length > 1900) {
+  sendRequest({ content: message });
+}
+function sendRequest(requestBody) {
+  if (requestBody.length <= 0 || requestBody.length > 1900) {
     notify("Message cannot be empty or too long.", "error");
     return;
   }
-  sendRequest({ content: message });
-}
-function sendEmbed(embed) {
-  sendRequest({ embeds: [embed] });
-}
-function sendRequest(requestBody) {
   fetch(selectedHook.url, {
     method: "POST",
     headers: {
@@ -183,10 +246,10 @@ function sendRequest(requestBody) {
       }
       notify(`Successfully sent to ${selectedHook.name}`, "success");
       clearField();
-      saveFieldData();
+      updateSendButton();
     })
     .catch((error) => {
-      notify("An error occurred: " + error, "error");
+      notify("An error occurred: " + (error.message || "Unknown"), "error");
       console.error("An error occurred:", error.message);
     })
     .finally(() => {
@@ -194,83 +257,29 @@ function sendRequest(requestBody) {
     });
 }
 
-//open settings
-setting.addEventListener("click", () => {
-  chrome.runtime.openOptionsPage();
-});
-
-//changing layout
-changeLayout.addEventListener("click", () => {
-  if (layoutType == "message") {
-    layoutType = "embed";
-  } else if (layoutType == "embed") {
-    layoutType = "message";
-  }
-  updateLayoutType();
-  loadFieldData();
-  updateSendButton();
-});
-
-//share only current tab
-shareCurrentTab.addEventListener("click", async () => {
-  const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
-  let tab = `${currTab.url}\n`;
-  layoutType == "message" ? (messageBox.value += tab) : (embedURLField.value = tab);
-  manageTextAndButton();
-});
-
-//share all tabs
-shareAllTab.addEventListener("click", async () => {
-  const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
-  const tab = allTabs.map((tab) => tab.url).join("\n") + "\n";
-  layoutType == "message" ? (messageBox.value += tab) : (embedDescriptionField.value += tab);
-  manageTextAndButton();
-});
-
-//toggling between hooks work
-prevHook.addEventListener("click", () => {
-  if (selectedHook.index > 0) {
-    updateCurrentHook(--selectedHook.index);
-  }
-});
-nextHook.addEventListener("click", () => {
-  if (selectedHook.index < numberOfHook - 1) {
-    updateCurrentHook(++selectedHook.index);
-  }
-});
-
-//making input fields responsive
-//on change event, only the button is updated to avoid spam-writing cache
-messageBox.addEventListener("input", manageTextAndButton);
-messageBox.addEventListener("change", updateSendButton);
-
-//enabling throttling again but for indivudal fields this time
-let debounceTimeouts = {};
-embedField.forEach((field) => {
-  field.addEventListener("input", () => {
-    updateSendButton();
-    clearTimeout(debounceTimeouts[field.name]);
-    debounceTimeouts[field.name] = setTimeout(() => {
-      saveText(field.name, field.value);
-    }, 800);
-  });
-});
-
-//making send buttons work
+//sending a message
 sendMessageButton.addEventListener("click", () => {
-  sendMessage(messageBox.value);
+  sendMessage(messageBox.value.trim());
 });
+
+//sending an embed
 embedArea.addEventListener("submit", (event) => {
   event.preventDefault();
-  manageTextAndButton();
   let embed = {};
-  embedField.forEach((el) => (embed[el.name] = el.value));
-  sendEmbed(createEmbed(embed));
+  allEmbedFields.forEach((el) => (embed[el.name] = el.value.trim()));
+  sendEmbed(embed);
 });
 
 function init() {
-  loadFieldData();
   updateState();
 }
-
 init();
+
+// IMPORTANT: Since loadFieldData() operates asynchronously and
+// doesn't maintain a strict order, the updateSendButton() function
+// is invoked again. This behavior arises because,
+// during the initial page load, there exists a brief interval
+// where the fields are momentarily empty.
+setTimeout(() => {
+  updateSendButton();
+}, 100);

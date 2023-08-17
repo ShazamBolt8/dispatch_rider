@@ -2,9 +2,29 @@
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
 }
-#sendMessage {
+#sendMessageButton {
   border-top-right-radius: 0px;
   border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  flex-grow: 2;
+}
+.groupButtons {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+}
+.clearFieldButton {
+  margin: 0;
+  flex-grow: 2;
+  padding: 8px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  background: #da373c;
+}
+.deleteEmbedButton{
+  border-radius: 8px !important;
+  margin-right: 8px !important;
 }
 #nextHook,
 #prevHook {
@@ -66,4 +86,10 @@ a:hover {
   color: white;
   animation: toUp 500ms cubic-bezier(0.2, 0.2, 0.2, 0.5);
   display: none;
+}
+#clearFieldButton:hover {
+  background: #a12828;
+}
+#clearFieldButton:active {
+  background: #8f2022;
 }

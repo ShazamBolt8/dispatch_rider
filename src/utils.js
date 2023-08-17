@@ -1,6 +1,6 @@
 //chrome storage
 const storage = chrome.storage.sync;
-const cache = chrome.storage.local;
+const cache = chrome.storage.session;
 
 //getting all hooks
 function getWebhooksFromStorage(callback) {

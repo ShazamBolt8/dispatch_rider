@@ -11,19 +11,19 @@
     <div class="container">
       <!--The place for extra buttons-->
       <div class="flex_noWrap">
-        <button id="changeLayout">
+        <button id="changeLayoutButton">
           <object id="changeLayoutIcon" type="image/svg+xml"></object>
           <span id="changeLayoutText"></span>
         </button>
-        <button id="shareCurrentTab">
+        <button id="shareCurrentTabButton">
           <object data="/assets/share_current.svg" type="image/svg+xml"></object>
           Current Tab
         </button>
-        <button id="shareAllTab">
+        <button id="shareAllTabButton">
           <object data="/assets/share_all.svg" type="image/svg+xml"></object>
           All Tabs
         </button>
-        <button id="setting">
+        <button id="settingButton">
           <object data="/assets/settings.svg" type="image/svg+xml"></object>
           Settings
         </button>
@@ -43,10 +43,13 @@
       <!--The place to add new messages-->
       <div id="messageArea" class="mainArea">
         <textarea id="messageBox" placeholder="Message Here"></textarea>
-        <button class="submitButton" id="sendMessage">
-          Send Message
-          <object data="/assets/send.svg" type="image/svg+xml"></object>
-        </button>
+        <div class="groupButtons">
+          <button class="clearFieldButton"><object data="../assets/delete.svg" type="image/svg+xml"></object></button>
+          <button class="submitButton" id="sendMessageButton">
+            Send Message
+            <object data="/assets/send.svg" type="image/svg+xml"></object>
+          </button>
+        </div>
       </div>
       <form id="embedArea" class="mainArea">
         <div class="group">
@@ -58,10 +61,13 @@
         <input name="url" type="text" placeholder="URL (optional)" />
         <input name="thumbnail" type="text" placeholder="Thumbnail URL (optional)" />
         <input name="footer" type="text" placeholder="Footer (optional)" />
-        <button type="submit" class="submitButton" id="sendEmbed">
-          Send Embed
-          <object data="/assets/send.svg" type="image/svg+xml"></object>
-        </button>
+        <div class="groupButtons">
+          <button type="button" class="clearFieldButton deleteEmbedButton"><object data="../assets/delete.svg" type="image/svg+xml"></object></button>
+          <button type="submit" class="submitButton" id="sendEmbedButton">
+            Send Embed
+            <object data="/assets/send.svg" type="image/svg+xml"></object>
+          </button>
+        </div>
       </form>
       <footer><a href="https://github.com/ShazamBolt8/dispatch_rider/">Made by ShazamBolt8, Bisskut and Kuroko</a></footer>
       <!--A box for displaying messages-->
