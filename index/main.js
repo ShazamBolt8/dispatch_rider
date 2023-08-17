@@ -262,6 +262,13 @@ sendMessageButton.addEventListener("click", () => {
   sendMessage(messageBox.value.trim());
 });
 
+//adding a shortcut
+messageBox.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    sendMessage(messageBox.value.trim());
+  }
+});
+
 //sending an embed
 embedArea.addEventListener("submit", (event) => {
   event.preventDefault();
