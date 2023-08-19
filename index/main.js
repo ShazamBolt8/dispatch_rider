@@ -37,7 +37,7 @@ function notify(message = "Message sent successfully.", type = "success") {
   setTimeout(() => {
     notification.style.display = "none";
     notification.className = "";
-  }, 2000);
+  }, 700);
 }
 
 //update layout from one type to the other
@@ -229,10 +229,16 @@ function sendMessage(message) {
   sendRequest({ content: message });
 }
 function sendRequest(requestBody) {
-  if (requestBody.length <= 0 || requestBody.length > 1900) {
-    notify("Message cannot be empty or too long.", "error");
+  if (requestBody.content.trim() .length<= 0 || requestBody.content.trim() .length > 1900) {
+    notify("Message cannot be too short or long.", "warn");
     return;
   }
+
+  //clear text and disable send button
+  clearField();
+  loadFieldData();
+  updateSendButton();
+
   fetch(selectedHook.url, {
     method: "POST",
     headers: {
@@ -245,12 +251,10 @@ function sendRequest(requestBody) {
         throw new Error(response.statusText);
       }
       notify(`Successfully sent to ${selectedHook.name}`, "success");
-      clearField();
-      updateSendButton();
     })
     .catch((error) => {
-      notify("An error occurred: " + (error.message || "Unknown"), "error");
-      console.error("An error occurred:", error.message);
+      notify("An error occurred.", "error");
+      console.error(error);
     })
     .finally(() => {
       updateState();
