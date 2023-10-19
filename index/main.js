@@ -229,9 +229,25 @@ function sendMessage(message) {
   sendRequest({ content: message });
 }
 function sendRequest(requestBody) {
-  if (requestBody.content.trim() .length<= 0 || requestBody.content.trim() .length > 1900) {
-    notify("Message cannot be too short or long.", "warn");
+  if (!requestBody.content && !requestBody.embeds) {
+    notify("Message is empty.", "warn");
     return;
+  }
+
+  if (requestBody.content) {
+    const trimmedContent = requestBody.content.trim();
+
+    if (trimmedContent.length <= 0 || trimmedContent.length > 1900) {
+      notify("Message cannot be too short or too long.", "warn");
+      return;
+    }
+  }
+
+  if (requestBody.embeds) {
+    if (requestBody.embeds[0].description.length <= 0 || requestBody.embeds[0].description.length > 4000) {
+      notify("Description cannot be too short or too long.", "warn");
+      return;
+    }
   }
 
   //clear text and disable send button
