@@ -1,10 +1,10 @@
 # Dispatch Rider
 
-<p align="center"><img width="400px" width="400px" alt="Dispatch Rider Logo" src="assets/logo/logo_main.png"></p>
+<p align="center"><img width="400px" alt="Dispatch Rider Logo" src="assets/logo/logo_main.png"></p>
 
-**Send Discord Messages Directly from Chrome**
+**Send Discord Messages Directly from Your Browser**
 
-Dispatch Rider is a powerful Chrome extension designed to streamline communication by enabling users to send messages to Discord channels directly from their browser, eliminating the need to log in or open the Discord app.
+Dispatch Rider is a powerful browser extension designed to streamline communication by enabling users to send messages to Discord channels directly from their browser, eliminating the need to log in or open the Discord app.
 
 ## Features
 
@@ -15,15 +15,15 @@ Dispatch Rider is a powerful Chrome extension designed to streamline communicati
 ## Installation
 
 1. Download the extension files from the repository.
-2. Open your Chrome browser and navigate to `chrome://extensions/`.
+2. Open your browser and navigate to the extension settings.
 3. Enable the "Developer mode" option.
 4. Click on "Load unpacked" and select the downloaded extension folder.
-5. Look for the Dispatch Rider icon, now comfortably resting in your Chrome toolbar.
+5. Look for the Dispatch Rider icon, now comfortably resting in your browser toolbar.
 
 ## Screenshots
 
 - Sending a message<br>
-   <p align="center"><img width="450px" alt="Example One" src="assets/screenshots/screeenshot_main.jpg"></p>
+   <p align="center"><img width="450px" alt "Example One" src="assets/screenshots/screeenshot_main.jpg"></p>
 
 - Sending an embed<br>
   <p align="center"><img width="450px" alt="Example Two" src="assets/screenshots/screenshot_secondary.jpg"></p>
@@ -36,7 +36,7 @@ Dispatch Rider is a powerful Chrome extension designed to streamline communicati
 
 ## Usage
 
-1. Click on the Dispatch Rider icon in the Chrome toolbar.
+1. Click on the Dispatch Rider icon in your browser toolbar.
 2. Craft your message and choose the target Discord channel.
 3. Hit "Send" to dispatch your message instantly, bridging the communication gap effortlessly.
 

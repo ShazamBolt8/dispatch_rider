@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Dispatch Rider",
-  "description": "A Chrome extension to send Discord messages directly from Chrome without having to log in or execute Discord",
+  "description": "A browser extension to send Discord messages directly without the need to log in to Discord",
   "version": "0.0.1",
   "action": {
     "default_popup": "index/index.html"
