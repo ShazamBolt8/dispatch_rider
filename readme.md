@@ -6,6 +6,13 @@
 
 Dispatch Rider is a powerful browser extension designed to streamline communication by enabling users to send messages to Discord channels directly from their browser, eliminating the need to log in or open the Discord app.
 
+## ✨ Changelog
+
+- **Remembers last selected webhook**
+- **Added 3 new themes**
+- **Remembers selected layout type**
+- **Fixed settings page flickering**
+
 ## Features
 
 - **Effortless Messaging:** Dispatch messages to your Discord channels without the hassle of logging in or launching the Discord application.
