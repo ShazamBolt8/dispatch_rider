@@ -13,19 +13,7 @@
   flex-flow: row nowrap;
   width: 100%;
 }
-.clearFieldButton {
-  margin: 0;
-  flex-grow: 2;
-  padding: 8px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-  background: #da373c;
-}
-.deleteEmbedButton {
-  border-radius: 8px !important;
-  margin-right: 8px !important;
-}
+
 #nextHook,
 #prevHook {
   width: 40%;
@@ -57,13 +45,13 @@ a:hover {
   text-decoration: underline;
 }
 .success {
-  background: #06a151;
+  background: var(--success);
 }
 .warn {
-  background: #d7511d;
+  background: var(--danger);
 }
 .error {
-  background: #eb2433;
+  background: var(--error);
 }
 @keyframes toUp {
   from {
@@ -87,9 +75,23 @@ a:hover {
   animation: toUp 300ms cubic-bezier(0.1, 0.2, 0.2, 0.8);
   display: none;
 }
-.clearFieldButton:hover {
-  background: #a12828;
+.clearFieldButton {
+  margin: 0;
+  flex-grow: 2;
+  padding: 8px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  background: var(--danger);
 }
-.clearFieldButton:active {
-  background: #8f2022;
+.deleteEmbedButton {
+  border-radius: 8px !important;
+  margin-right: 8px !important;
+}
+.clearFieldButton:hover {
+  background: var(--danger-hover);
+}
+.clearFieldButton:active,
+.clearFieldButton:focus {
+  background: var(--danger-active);
 }

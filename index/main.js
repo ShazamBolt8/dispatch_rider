@@ -7,6 +7,8 @@ import {
   getCurrentHook,
   setCurrentLayout,
   getCurrentLayout,
+  themes,
+  loadAndApplyTheme,
 } from "../src/utils.js";
 
 let layoutType = await getCurrentLayout();
@@ -21,9 +23,7 @@ const messageBox = document.getElementById("messageBox");
 const embedArea = document.getElementById("embedArea");
 const sendEmbedButton = document.getElementById("sendEmbedButton");
 const requiredEmbedFields = [...embedArea.querySelectorAll("[required]")];
-const allEmbedFields = [
-  ...embedArea.querySelectorAll("input[type='text'], textarea"),
-];
+const allEmbedFields = [...embedArea.querySelectorAll("input[type='text'], textarea")];
 
 const changeLayoutButton = document.getElementById("changeLayoutButton");
 
@@ -76,30 +76,27 @@ function updateLayout() {
 //(enable || disable) send buttons based on some factors
 function updateSendButton() {
   const isMessageBoxEmpty = messageBox.value.trim().length === 0;
-  const isAnyEmbedRequiredFieldEmpty = requiredEmbedFields.some(
-    (field) => field.value.trim().length === 0
-  );
+  const isAnyEmbedRequiredFieldEmpty = requiredEmbedFields.some((field) => field.value.trim().length === 0);
   sendMessageButton.disabled = numberOfHook === 0 || isMessageBoxEmpty;
   sendEmbedButton.disabled = numberOfHook === 0 || isAnyEmbedRequiredFieldEmpty;
 }
 
 //update stuff related to hook
-function updateHookData() {
-  getWebhooksFromStorage((webhooks) => {
-    numberOfHook = webhooks.length;
-    let index = selectedHook.index;
-    if (!numberOfHook > 0) {
-      currentHookElement.innerText = "No webhook found";
-      setCurrentHook({ index: 0, name: "", url: "" });
-    } else {
-      selectedHook.name = webhooks[index].name;
-      selectedHook.url = webhooks[index].url;
-      setCurrentHook(selectedHook);
-      currentHookElement.innerText = selectedHook.name;
-    }
-    prevHookButton.disabled = index === 0;
-    nextHookButton.disabled = index >= numberOfHook - 1;
-  });
+async function updateHookData() {
+  const webhooks = await getWebhooksFromStorage();
+  numberOfHook = webhooks.length;
+  let index = selectedHook.index;
+  if (!numberOfHook > 0) {
+    currentHookElement.innerText = "No webhook found";
+    setCurrentHook({ index: 0, name: "", url: "" });
+  } else {
+    selectedHook.name = webhooks[index].name;
+    selectedHook.url = webhooks[index].url;
+    setCurrentHook(selectedHook);
+    currentHookElement.innerText = selectedHook.name;
+  }
+  prevHookButton.disabled = index === 0;
+  nextHookButton.disabled = index >= numberOfHook - 1;
 }
 
 function clearField() {
@@ -205,9 +202,7 @@ settingButton.addEventListener("click", () => {
 });
 
 //clear button
-const clearFieldButton = [
-  ...document.getElementsByClassName("clearFieldButton"),
-];
+const clearFieldButton = [...document.getElementsByClassName("clearFieldButton")];
 clearFieldButton.forEach((btn) => btn.addEventListener("click", clearField));
 
 /**********************************************
@@ -262,10 +257,7 @@ function sendRequest(requestBody) {
   }
 
   if (requestBody.embeds) {
-    if (
-      requestBody.embeds[0].description.length <= 0 ||
-      requestBody.embeds[0].description.length > 4000
-    ) {
+    if (requestBody.embeds[0].description.length <= 0 || requestBody.embeds[0].description.length > 4000) {
       notify("Description cannot be too short or too long.", "warn");
       return;
     }
@@ -305,11 +297,7 @@ sendMessageButton.addEventListener("click", () => {
 
 //adding a shortcut
 messageBox.addEventListener("keydown", (event) => {
-  if (
-    event.key === "Enter" &&
-    !event.shiftKey &&
-    sendMessageButton.disabled == false
-  ) {
+  if (event.key === "Enter" && !event.shiftKey && sendMessageButton.disabled == false) {
     sendMessage(messageBox.value.trim());
   }
 });
@@ -322,10 +310,11 @@ embedArea.addEventListener("submit", (event) => {
   sendEmbed(embed);
 });
 
-function init() {
+async function init() {
   updateState();
+  await loadAndApplyTheme(themes);
 }
-init();
+await init();
 
 // IMPORTANT: Since loadFieldData() operates asynchronously and
 // doesn't maintain a strict order, the updateSendButton() function

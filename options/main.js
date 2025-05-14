@@ -3,6 +3,12 @@ import {
   getWebhooksFromStorage,
   setCurrentHook,
   reinsertWebhooksToStorage,
+  themes,
+  getTheme,
+  applyTheme,
+  saveTheme,
+  loadAndApplyTheme,
+  capitalize,
 } from "../src/utils.js";
 
 const webhookNameField = document.getElementById("webhookNameField");
@@ -141,4 +147,17 @@ importButton.addEventListener("click", async () => {
   }, 2000);
 });
 
+toggleTheme.addEventListener("click", async (e) => {
+  const themeNames = Object.keys(themes);
+  const currentTheme = await getTheme();
+  const currentIndex = themeNames.indexOf(currentTheme);
+  const nextIndex = (currentIndex + 1) % themeNames.length;
+  const nextTheme = themeNames[nextIndex];
+  console.log(nextTheme);
+  applyTheme(nextTheme);
+  saveTheme(nextTheme);
+  e.target.innerText = `Theme: ${capitalize(nextTheme)}`;
+});
+
 await updateState();
+toggleTheme.innerText = `Theme: ${capitalize(await loadAndApplyTheme(themes))}`;
