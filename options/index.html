@@ -10,25 +10,27 @@
 
   <body>
     <div class="container">
-      <h1 class="title">Manage Hooks</h1>
-      <div class="mainArea">
+      <div class="mainArea form">
         <div class="group">
           <input id="webhookNameField" placeholder="Webhook name" type="text" />
           <input id="webhookUrlField" placeholder="Webhook URL" type="text" />
-          <button class="submitButton" id="addWebhook">
+          <button class="submitButton addBtn" id="addWebhook">
             Add Hook
             <object data="../assets/add.svg" type="image/svg+xml"></object>
           </button>
         </div>
       </div>
-      <div id="hooksList" class="mainArea hookListContainer">
-        <!--
-					<div class="flex_noWrap hookContainer">
-          	<span class="name">General | BlueWinds</span>
-          	<span class="url">https://example.com/example/hook/1234567890/abcdefghijklmnopqrstuvwxyz</span>
-          	<span data-index=0 class="delete"><object data="../assets/delete.svg" type="image/svg+xml"></object></span>
-        	</div>
-				-->
+      <div id="hooksList" class="mainArea hookListContainer"></div>
+      <div class="group options">
+        <button id="exportButton" class="submitButton">
+          <label>Export Webhooks</label>
+          <object data="../assets/export.svg" type="image/svg+xml"></object>
+        </button>
+        <button id="importButton" class="submitButton">
+          <label>Import Webhooks</label>
+          <object data="../assets/import.svg" type="image/svg+xml"></object>
+        </button>
+        <button id="toggleTheme" class="submitButton">Change Theme</button>
       </div>
     </div>
     <script src="main.js" type="module"></script>

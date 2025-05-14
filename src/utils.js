@@ -6,12 +6,23 @@
 const storage = chrome.storage.sync;
 const cache = chrome.storage.session;
 
-//getting all hooks
-function getWebhooksFromStorage(callback) {
-  storage.get(["webhook"], ({ webhook }) => {
-    const webhooks = webhook || [];
-    callback(webhooks);
+function getWebhooksFromStorage() {
+  return new Promise((resolve) => {
+    storage.get(["webhook"], ({ webhook }) => {
+      const webhooks = webhook || [];
+      resolve(webhooks);
+    });
   });
+}
+
+async function setWebhookToStorage(webhook) {
+  let webhooks = await getWebhooksFromStorage();
+  webhooks.push(webhook);
+  storage.set({ webhook: webhooks });
+}
+
+async function reinsertWebhooksToStorage(webhooks) {
+  storage.set({ webhook: webhooks });
 }
 
 function setCurrentHook(hook = { index: 0, name: "", url: "" }) {
@@ -40,16 +51,7 @@ function setCurrentLayout(layout = "message") {
 
 //creating an embed
 function createEmbed(data) {
-  const {
-    title,
-    description,
-    author_name,
-    footer,
-    url,
-    thumbnail,
-    author_icon_url,
-    color,
-  } = data;
+  const { title, description, author_name, footer, url, thumbnail, author_icon_url, color } = data;
   const embed = {
     title: title || "No Title",
     description: description || "No Description",
@@ -91,6 +93,7 @@ function loadText(key, callback) {
 
 export {
   getWebhooksFromStorage,
+  setWebhookToStorage,
   createEmbed,
   saveText,
   loadText,
@@ -98,4 +101,5 @@ export {
   getCurrentHook,
   getCurrentLayout,
   setCurrentLayout,
+  reinsertWebhooksToStorage,
 };
