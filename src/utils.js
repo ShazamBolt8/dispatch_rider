@@ -1,3 +1,7 @@
+/**
+ * NOTE - Make most of these functiosn async
+ */
+
 //chrome storage
 const storage = chrome.storage.sync;
 const cache = chrome.storage.session;
@@ -10,9 +14,42 @@ function getWebhooksFromStorage(callback) {
   });
 }
 
+function setCurrentHook(hook = { index: 0, name: "", url: "" }) {
+  cache.set({ currentHook: hook });
+}
+
+function getCurrentHook() {
+  return new Promise((resolve) => {
+    cache.get(["currentHook"], ({ currentHook }) => {
+      resolve(currentHook || { index: 0, name: "", url: "" });
+    });
+  });
+}
+
+function getCurrentLayout() {
+  return new Promise((resolve) => {
+    cache.get(["currentLayout"], ({ currentLayout }) => {
+      resolve(currentLayout || "message");
+    });
+  });
+}
+
+function setCurrentLayout(layout = "message") {
+  cache.set({ currentLayout: layout });
+}
+
 //creating an embed
 function createEmbed(data) {
-  const { title, description, author_name, footer, url, thumbnail, author_icon_url, color } = data;
+  const {
+    title,
+    description,
+    author_name,
+    footer,
+    url,
+    thumbnail,
+    author_icon_url,
+    color,
+  } = data;
   const embed = {
     title: title || "No Title",
     description: description || "No Description",
@@ -52,4 +89,13 @@ function loadText(key, callback) {
   });
 }
 
-export { storage, getWebhooksFromStorage, createEmbed, saveText, loadText, cache };
+export {
+  getWebhooksFromStorage,
+  createEmbed,
+  saveText,
+  loadText,
+  setCurrentHook,
+  getCurrentHook,
+  getCurrentLayout,
+  setCurrentLayout,
+};

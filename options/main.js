@@ -1,4 +1,8 @@
-import { storage, getWebhooksFromStorage, createEmbed } from "../src/utils.js";
+import {
+  storage,
+  getWebhooksFromStorage,
+  setCurrentHook,
+} from "../src/utils.js";
 
 // global references
 const webhookNameField = document.getElementById("webhookNameField");
@@ -41,13 +45,20 @@ function updateList() {
       .slice() //NOTE: slice() is used to create a shallow copy because reverse() modifies original array
       .reverse()
       .forEach((webhook, index) => {
-        createHookElement(webhook.name, webhook.url, webhooks.length - 1 - index); //because its reversed
+        createHookElement(
+          webhook.name,
+          webhook.url,
+          webhooks.length - 1 - index
+        ); //because its reversed
       });
   });
 }
 
 function updateAddButton() {
-  if (webhookNameField.value.trim().length == 0 || webhookUrlField.value.trim().length == 0) {
+  if (
+    webhookNameField.value.trim().length == 0 ||
+    webhookUrlField.value.trim().length == 0
+  ) {
     addWebhook.disabled = true;
   } else {
     addWebhook.disabled = false;
@@ -78,6 +89,7 @@ function deleteHook(element) {
   if (!index) return;
   getWebhooksFromStorage((webhooks) => {
     webhooks.splice(index, 1);
+    setCurrentHook(); //set index back to 0
     storage.set({ webhook: webhooks });
     updateList();
   });
