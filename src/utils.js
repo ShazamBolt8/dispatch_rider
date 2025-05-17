@@ -19,12 +19,12 @@ function setCurrentHook(hookData = {}) {
     name: hookData.name || "",
     url: hookData.url || "",
   };
-  chrome.storage.session.set({ currentHook });
+  chrome.storage.sync.set({ currentHook });
 }
 
 function getCurrentHook() {
   return new Promise((resolve) => {
-    chrome.storage.session.get(["currentHook"], ({ currentHook }) => {
+    chrome.storage.sync.get(["currentHook"], ({ currentHook }) => {
       resolve(currentHook || { index: 0, name: "", url: "" });
     });
   });

@@ -81,7 +81,7 @@ const themes = {
 
 function getTheme() {
   return new Promise((resolve) => {
-    chrome.storage.session.get(["theme"], (theme) => {
+    chrome.storage.sync.get(["theme"], (theme) => {
       resolve(theme?.theme || "ash");
     });
   });
@@ -96,7 +96,7 @@ function applyTheme(themes, themeName) {
 }
 
 function saveTheme(themeName) {
-  chrome.storage.session.set({ theme: themeName });
+  chrome.storage.sync.set({ theme: themeName });
 }
 
 async function loadAndApplyTheme(themes) {
