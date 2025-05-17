@@ -10,6 +10,8 @@ Dispatch Rider is a powerful browser extension designed to streamline communicat
 
 - **Remembers last selected webhook**
 - **Added 3 new themes**
+- **Refactored codebase**
+- **User settings are saved in synced storage**
 - **Remembers selected layout type**
 - **Fixed settings page flickering**
 

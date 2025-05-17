@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Dispatch Rider",
   "description": "A browser extension to send Discord messages directly without the need to log in to Discord",
-  "version": "2.0.0",
+  "version": "2.2.2",
   "action": {
     "default_popup": "index/index.html"
   },
