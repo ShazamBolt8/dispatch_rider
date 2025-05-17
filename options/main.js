@@ -1,15 +1,5 @@
-import {
-  setWebhookToStorage,
-  getWebhooksFromStorage,
-  setCurrentHook,
-  reinsertWebhooksToStorage,
-  themes,
-  getTheme,
-  applyTheme,
-  saveTheme,
-  loadAndApplyTheme,
-  capitalize,
-} from "../src/utils.js";
+import { setWebhookToStorage, getWebhooksFromStorage, setCurrentHook, capitalize } from "../src/utils.js";
+import { loadAndApplyTheme, getTheme, saveTheme, themes } from "../src/theme.js";
 
 const webhookNameField = document.getElementById("webhookNameField");
 const webhookUrlField = document.getElementById("webhookUrlField");
@@ -90,16 +80,16 @@ async function deleteHook(element) {
 
   let hooks = await getWebhooksFromStorage();
   hooks.splice(index, 1);
-  await reinsertWebhooksToStorage(hooks);
+  chrome.storage.sync.set({ webhook: hooks });
 
-  setCurrentHook(); // set selection to the first hook
+  setCurrentHook({ index: 0 }); // set selection to the first hook
 
   hooksList.removeChild(hooksList.children[index]);
 
   //reset indices
-  [...hooksList.children].forEach((el, i) => {
-    const btn = el.querySelector(".dangerButton");
-    btn.setAttribute("data-index", i);
+  [...hooksList.children].forEach((element, index) => {
+    const btn = element.querySelector(".dangerButton");
+    btn.setAttribute("data-index", index);
   });
 
   await updateExportButton();
@@ -107,8 +97,6 @@ async function deleteHook(element) {
 
 webhookNameField.addEventListener("input", updateAddButton);
 webhookUrlField.addEventListener("input", updateAddButton);
-webhookNameField.addEventListener("change", updateAddButton);
-webhookUrlField.addEventListener("change", updateAddButton);
 
 addWebhook.addEventListener("click", async () => {
   await createNewHook(webhookNameField.value, webhookUrlField.value);
@@ -133,7 +121,7 @@ importButton.addEventListener("click", async () => {
   try {
     const parsed = JSON.parse(data);
     webhooks.push(...parsed);
-    await reinsertWebhooksToStorage(webhooks);
+    chrome.storage.sync.set({ webhook: webhooks });
     importButton.children[0].innerText = "Imported!";
     importButton.children[1].data = "../assets/check.svg";
     await updateState();
@@ -153,9 +141,8 @@ toggleTheme.addEventListener("click", async (e) => {
   const currentIndex = themeNames.indexOf(currentTheme);
   const nextIndex = (currentIndex + 1) % themeNames.length;
   const nextTheme = themeNames[nextIndex];
-  console.log(nextTheme);
-  applyTheme(nextTheme);
   saveTheme(nextTheme);
+  await loadAndApplyTheme(themes);
   e.target.innerText = `Theme: ${capitalize(nextTheme)}`;
 });
 

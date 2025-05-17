@@ -7,9 +7,8 @@ import {
   getCurrentHook,
   setCurrentLayout,
   getCurrentLayout,
-  themes,
-  loadAndApplyTheme,
 } from "../src/utils.js";
+import { loadAndApplyTheme, themes } from "../src/theme.js";
 
 let layoutType = await getCurrentLayout();
 
@@ -40,7 +39,7 @@ const nextHookButton = document.getElementById("nextHook");
  **********************************************/
 
 // types: success, warn, error
-function notify(message = "Message sent successfully.", type = "success") {
+function notify(message = "Message sent successfully.", type = "success", duration = 700) {
   const notification = document.getElementById("notification");
   notification.innerText = message;
   notification.className = type;
@@ -48,13 +47,14 @@ function notify(message = "Message sent successfully.", type = "success") {
   setTimeout(() => {
     notification.style.display = "none";
     notification.className = "";
-  }, 700);
+  }, duration);
 }
 
 //update layout from one type to the other
 function updateLayout() {
   const changeLayoutText = document.getElementById("changeLayoutText");
   const changeLayoutIcon = document.getElementById("changeLayoutIcon");
+  setCurrentLayout(layoutType);
   if (layoutType == "message") {
     messageArea.style.display = "flex";
     embedArea.style.display = "none";
@@ -81,12 +81,11 @@ function updateSendButton() {
   sendEmbedButton.disabled = numberOfHook === 0 || isAnyEmbedRequiredFieldEmpty;
 }
 
-//update stuff related to hook
 async function updateHookData() {
   const webhooks = await getWebhooksFromStorage();
   numberOfHook = webhooks.length;
   let index = selectedHook.index;
-  if (!numberOfHook > 0) {
+  if (!numberOfHook) {
     currentHookElement.innerText = "No webhook found";
     setCurrentHook({ index: 0, name: "", url: "" });
   } else {
@@ -110,29 +109,25 @@ function clearField() {
       saveText(field.name, field.value);
     });
   }
+  updateSendButton();
 }
 
-function loadFieldData() {
+async function loadFieldData() {
   if (layoutType == "message") {
-    loadText("message", (message) => {
-      messageBox.value = message === undefined ? "" : message;
-      updateSendButton();
-    });
+    messageBox.value = (await loadText("message")) || "";
   }
   if (layoutType == "embed") {
-    allEmbedFields.forEach((field) => {
-      loadText(field.name, (data) => {
-        field.value = data === undefined ? "" : data;
-        updateSendButton();
-      });
-    });
+    for (let i = 0; i < allEmbedFields.length; i++) {
+      allEmbedFields[i].value = (await loadText(allEmbedFields[i].name)) || "";
+    }
   }
+  updateSendButton();
 }
 
 //updating availability of send buttons, current hook name, and layout type
-function updateState() {
-  loadFieldData();
-  updateHookData();
+async function updateState() {
+  await loadFieldData();
+  await updateHookData();
   updateLayout();
   updateSendButton();
 }
@@ -147,10 +142,9 @@ function updateState() {
  **********************************************/
 
 //switch between layouts
-changeLayoutButton.addEventListener("click", () => {
+changeLayoutButton.addEventListener("click", async () => {
   layoutType = layoutType == "message" ? "embed" : "message";
-  setCurrentLayout(layoutType);
-  loadFieldData();
+  await loadFieldData();
   updateSendButton();
   updateLayout();
 });
@@ -159,6 +153,7 @@ changeLayoutButton.addEventListener("click", () => {
 prevHookButton.addEventListener("click", () => {
   updateHookData(--selectedHook.index);
 });
+
 nextHookButton.addEventListener("click", () => {
   updateHookData(++selectedHook.index);
 });
@@ -166,9 +161,10 @@ nextHookButton.addEventListener("click", () => {
 //share browser tabs
 const shareCurrentTabButton = document.getElementById("shareCurrentTabButton");
 const shareAllTabButton = document.getElementById("shareAllTabButton");
+
 shareCurrentTabButton.addEventListener("click", async () => {
-  const currTab = await chrome.runtime.sendMessage({ message: "currentTab" });
-  const tabUrl = currTab.url;
+  const currentTab = await chrome.runtime.sendMessage({ message: "currentTab" });
+  const tabUrl = currentTab.url;
 
   allEmbedFields[4].value = tabUrl;
 
@@ -179,9 +175,9 @@ shareCurrentTabButton.addEventListener("click", async () => {
     allEmbedFields[4].value = tabUrl;
     saveText(allEmbedFields[4].name, allEmbedFields[4].value);
   }
-
   updateSendButton();
 });
+
 shareAllTabButton.addEventListener("click", async () => {
   const allTabs = await chrome.runtime.sendMessage({ message: "allTab" });
   const tab = allTabs.map((tab) => tab.url).join("\n") + "\n";
@@ -213,11 +209,11 @@ clearFieldButton.forEach((btn) => btn.addEventListener("click", clearField));
  *                                             *
  **********************************************/
 
-//updating send button while typing
 messageBox.addEventListener("input", () => {
   saveText("message", messageBox.value.trim());
   updateSendButton();
 });
+
 allEmbedFields.forEach((field) => {
   field.addEventListener("input", () => {
     saveText(field.name, field.value.trim());
@@ -234,14 +230,16 @@ allEmbedFields.forEach((field) => {
  *                                             *
  **********************************************/
 
-function sendEmbed(embed) {
+async function sendEmbed(embed) {
   embed = createEmbed(embed);
-  sendRequest({ embeds: [embed] });
+  await sendRequest({ embeds: [embed] });
 }
-function sendMessage(message) {
+
+async function sendMessage(message) {
   sendRequest({ content: message });
 }
-function sendRequest(requestBody) {
+
+async function sendRequest(requestBody) {
   if (!requestBody.content && !requestBody.embeds) {
     notify("Message is empty.", "warn");
     return;
@@ -257,70 +255,60 @@ function sendRequest(requestBody) {
   }
 
   if (requestBody.embeds) {
-    if (requestBody.embeds[0].description.length <= 0 || requestBody.embeds[0].description.length > 4000) {
+    const description = requestBody.embeds[0]?.description || "";
+    if (description.length <= 0 || description.length > 4000) {
       notify("Description cannot be too short or too long.", "warn");
       return;
     }
   }
 
-  //clear text and disable send button
+  // clear text and disable send button
   clearField();
-  loadFieldData();
+  await loadFieldData();
   updateSendButton();
 
-  fetch(selectedHook.url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestBody),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      notify(`Successfully sent to ${selectedHook.name}`, "success");
-    })
-    .catch((error) => {
-      notify("An error occurred.", "error");
-      console.error(error);
-    })
-    .finally(() => {
-      updateState();
+  try {
+    const response = await fetch(selectedHook.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
     });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    notify(`Successfully sent to ${selectedHook.name}`, "success");
+  } catch (error) {
+    notify("An error occurred.", "error");
+    console.error(error);
+  } finally {
+    await updateState();
+  }
 }
 
-//sending a message
-sendMessageButton.addEventListener("click", () => {
-  sendMessage(messageBox.value.trim());
+sendMessageButton.addEventListener("click", async () => {
+  await sendMessage(messageBox.value.trim());
 });
 
-//adding a shortcut
-messageBox.addEventListener("keydown", (event) => {
+messageBox.addEventListener("keydown", async (event) => {
   if (event.key === "Enter" && !event.shiftKey && sendMessageButton.disabled == false) {
-    sendMessage(messageBox.value.trim());
+    await sendMessage(messageBox.value.trim());
   }
 });
 
-//sending an embed
-embedArea.addEventListener("submit", (event) => {
+embedArea.addEventListener("submit", async (event) => {
   event.preventDefault();
   let embed = {};
   allEmbedFields.forEach((el) => (embed[el.name] = el.value.trim()));
-  sendEmbed(embed);
+  await sendEmbed(embed);
 });
 
 async function init() {
-  updateState();
+  await updateState();
   await loadAndApplyTheme(themes);
 }
-await init();
 
-// IMPORTANT: Since loadFieldData() operates asynchronously and
-// doesn't maintain a strict order, the updateSendButton() function
-// is invoked again. This behavior arises because,
-// during the initial page load, there exists a brief interval
-// where the fields are momentarily empty.
-setTimeout(() => {
-  updateSendButton();
-}, 100);
+await init();

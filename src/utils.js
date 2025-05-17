@@ -71,15 +71,17 @@ function createEmbed(data) {
 }
 
 function saveText(key, value) {
-  const data = {}; //this allows strings to be passed as keys
+  const data = {};
   data[key] = value;
   chrome.storage.session.set(data);
 }
 
-function loadText(key, callback) {
-  chrome.storage.session.get([key], (result) => {
-    const value = result[key];
-    callback(value);
+function loadText(key) {
+  return new Promise((resolve) => {
+    chrome.storage.session.get([key], (result) => {
+      const value = result[key];
+      resolve(value);
+    });
   });
 }
 

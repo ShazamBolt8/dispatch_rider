@@ -79,20 +79,30 @@ const themes = {
   onyx: onyxStyle,
 };
 
-async function loadAndApplyTheme() {
-  const { theme: themeName = "ash" } = await new Promise((resolve) => chrome.storage.session.get(["theme"], resolve));
+function getTheme() {
+  return new Promise((resolve) => {
+    chrome.storage.session.get(["theme"], (theme) => {
+      resolve(theme?.theme || "ash");
+    });
+  });
+}
 
+function applyTheme(themes, themeName) {
   const theme = themes[themeName];
-  if (!theme) return "ash";
-
+  if (!theme) return;
   for (const [key, value] of Object.entries(theme)) {
     document.documentElement.style.setProperty(key, value);
   }
-
-  return themeName;
 }
+
 function saveTheme(themeName) {
   chrome.storage.session.set({ theme: themeName });
 }
 
-export { loadAndApplyTheme, saveTheme };
+async function loadAndApplyTheme(themes) {
+  const currentTheme = await getTheme();
+  applyTheme(themes, currentTheme);
+  return currentTheme;
+}
+
+export { loadAndApplyTheme, saveTheme, getTheme, themes };
